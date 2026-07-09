@@ -1,0 +1,91 @@
+import { useState, useEffect } from 'react'
+import { format, startOfWeek, addDays, addWeeks, subWeeks, isSameDay, isToday } from 'date-fns'
+import { getEvents } from '../../api/familyApp'
+import { getPlan } from '../../api/mealPlanner'
+import DayColumn from './DayColumn'
+import EventModal from './EventModal'
+
+export default function WeekCalendar({ members }) {
+  const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date(), { weekStartsOn: 1 }))
+  const [events, setEvents] = useState([])
+  const [plan, setPlan] = useState(null)
+  const [modal, setModal] = useState(null) // { event } | { date } | null
+
+  const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
+  const from = format(weekStart, 'yyyy-MM-dd')
+  const to = format(days[6], 'yyyy-MM-dd')
+
+  useEffect(() => {
+    getEvents(from, to).then(setEvents)
+    getPlan(from).then(setPlan)
+  }, [from, to])
+
+  function refresh() {
+    getEvents(from, to).then(setEvents)
+  }
+
+  function refreshPlan() {
+    getPlan(from).then(setPlan)
+  }
+
+  function eventsForDay(day) {
+    return events.filter(e => e.occurrenceDate === format(day, 'yyyy-MM-dd'))
+  }
+
+  function mealForDay(day) {
+    if (!plan) return null
+    const dayName = format(day, 'EEEE').toLowerCase()
+    return plan.days?.[dayName] ?? null
+  }
+
+  return (
+    <div className="flex flex-col h-full">
+      {/* Week nav */}
+      <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200">
+        <button
+          onClick={() => setWeekStart(w => subWeeks(w, 1))}
+          className="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200 text-sm font-medium"
+        >
+          ← Prev
+        </button>
+        <span className="font-semibold text-gray-700">
+          {format(weekStart, 'MMM d')} – {format(days[6], 'MMM d, yyyy')}
+        </span>
+        <button
+          onClick={() => setWeekStart(w => addWeeks(w, 1))}
+          className="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200 text-sm font-medium"
+        >
+          Next →
+        </button>
+      </div>
+
+      {/* Day columns */}
+      <div className="flex flex-1 overflow-hidden">
+        {days.map(day => (
+          <DayColumn
+            key={day.toISOString()}
+            day={day}
+            events={eventsForDay(day)}
+            meal={mealForDay(day)}
+            weekStartDate={from}
+            today={isToday(day)}
+            onAddEvent={() => setModal({ date: format(day, 'yyyy-MM-dd') })}
+            onSelectEvent={event => setModal({ event })}
+            onMealUpdated={refreshPlan}
+          />
+        ))}
+      </div>
+
+      {modal && (
+        <EventModal
+          event={modal.event}
+          defaultDate={modal.date}
+          members={members}
+          weekStartDate={from}
+          onClose={() => setModal(null)}
+          onSaved={() => { setModal(null); refresh() }}
+        />
+      )}
+    </div>
+  )
+}

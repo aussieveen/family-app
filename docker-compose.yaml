@@ -31,5 +31,21 @@ services:
       MYSQL_PASSWORD: password
     volumes:
       - db_data:/var/lib/mysql:rw
+  frontend:
+    container_name: family-app-frontend
+    image: node:22-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host"
+    ports:
+      - '${FRONTEND_PORT:-3000}:5173'
+    volumes:
+      - ./frontend:/app:rw,cached
+    environment:
+      - VITE_FAMILY_API_URL=http://localhost:${APP_PORT:-10002}
+      - VITE_MEAL_API_URL=http://localhost:10001
+      - VITE_COOKBOOK_API_URL=http://localhost:10000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 volumes:
   db_data: {}
+

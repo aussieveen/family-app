@@ -22,11 +22,11 @@ class Event
     #[ORM\Column(length: 255)]
     private string $title;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private \DateTimeInterface $startAt;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    private \DateTimeImmutable $startAt;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $endAt = null;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $endAt = null;
 
     #[ORM\Column]
     private bool $allDay = false;
@@ -42,8 +42,8 @@ class Event
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $recurrenceDaysOfWeek = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $recurrenceUntil = null;
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $recurrenceUntil = null;
 
     #[ORM\Column]
     private \DateTimeImmutable $createdAt;
@@ -82,24 +82,24 @@ class Event
         return $this;
     }
 
-    public function getStartAt(): \DateTimeInterface
+    public function getStartAt(): \DateTimeImmutable
     {
         return $this->startAt;
     }
 
-    public function setStartAt(\DateTimeInterface $startAt): static
+    public function setStartAt(\DateTimeImmutable $startAt): static
     {
         $this->startAt = $startAt;
 
         return $this;
     }
 
-    public function getEndAt(): ?\DateTimeInterface
+    public function getEndAt(): ?\DateTimeImmutable
     {
         return $this->endAt;
     }
 
-    public function setEndAt(?\DateTimeInterface $endAt): static
+    public function setEndAt(?\DateTimeImmutable $endAt): static
     {
         $this->endAt = $endAt;
 
@@ -154,12 +154,12 @@ class Event
         return $this;
     }
 
-    public function getRecurrenceUntil(): ?\DateTimeInterface
+    public function getRecurrenceUntil(): ?\DateTimeImmutable
     {
         return $this->recurrenceUntil;
     }
 
-    public function setRecurrenceUntil(?\DateTimeInterface $recurrenceUntil): static
+    public function setRecurrenceUntil(?\DateTimeImmutable $recurrenceUntil): static
     {
         $this->recurrenceUntil = $recurrenceUntil;
 
