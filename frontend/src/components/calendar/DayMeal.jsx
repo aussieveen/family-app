@@ -27,7 +27,9 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
   const [selectedSideIds, setSelectedSideIds] = useState(new Set())
   const [suggestedSides, setSuggestedSides] = useState([])
   const [allOtherSides, setAllOtherSides] = useState([])
-  const [viewingRecipe, setViewingRecipe] = useState(null)
+  const [viewingAll, setViewingAll] = useState(false)
+  const [expandedIds, setExpandedIds] = useState(new Set())
+  const [recipeDetails, setRecipeDetails] = useState({})
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search), 1000)
@@ -90,6 +92,21 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
     })
   }
 
+  function toggleExpanded(recipeId) {
+    setExpandedIds(prev => {
+      const next = new Set(prev)
+      if (next.has(recipeId)) {
+        next.delete(recipeId)
+      } else {
+        next.add(recipeId)
+        if (!recipeDetails[recipeId]) {
+          getRecipe(recipeId).then(r => setRecipeDetails(prev => ({ ...prev, [recipeId]: r })))
+        }
+      }
+      return next
+    })
+  }
+
   async function handleConfirm() {
     await assignMeal(weekStartDate, dayName, selectedMainId, [...selectedSideIds])
     setOpen(false)
@@ -121,36 +138,30 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
 
   return (
     <>
-      <div className="border-l border-amber-200 bg-amber-50 flex-shrink-0 w-32 overflow-y-auto">
-        {allRecipes.map((r) => (
-          <div key={r.recipeId} className="flex items-center gap-2 px-2 py-1 border-b border-amber-100 last:border-b-0">
-            <button onClick={() => getRecipe(r.recipeId).then(setViewingRecipe)} className="flex items-center gap-2 flex-1 min-w-0 text-left">
+      <button
+        onClick={() => setViewingAll(true)}
+        className="border-l border-amber-200 bg-amber-50 flex-shrink-0 w-32 overflow-y-auto hover:bg-amber-100 transition-colors text-left"
+      >
+        {allRecipes.length === 0 ? (
+          <div className="flex items-center justify-center h-full text-xs text-amber-500 gap-1 py-3">
+            <span>+</span><span>Add meal</span>
+          </div>
+        ) : (
+          allRecipes.map((r) => (
+            <div key={r.recipeId} className="flex items-center gap-2 px-2 py-1 border-b border-amber-100 last:border-b-0">
               {r.image
                 ? <img src={r.image} alt={r.name} className="w-8 h-8 rounded object-cover flex-shrink-0" />
                 : <div className="w-8 h-8 rounded bg-amber-200 flex items-center justify-center text-sm flex-shrink-0">🍽️</div>
               }
               <span className="text-xs font-medium text-amber-900 break-words min-w-0">{r.name}</span>
-            </button>
-            <button
-              onClick={() => r.isMain ? handleRemoveMain() : handleRemoveSide(r.recipeId)}
-              className="text-amber-400 hover:text-red-500 flex-shrink-0 text-sm leading-none"
-            >
-              ✕
-            </button>
-          </div>
-        ))}
-        <button
-          onClick={() => setOpen(true)}
-          className="w-full py-1 text-xs text-amber-500 hover:text-amber-700 hover:bg-amber-100 flex items-center justify-center gap-1"
-        >
-          <span>+</span>
-          <span>{allRecipes.length === 0 ? 'Add meal' : 'Change'}</span>
-        </button>
-      </div>
+            </div>
+          ))
+        )}
+      </button>
 
       {/* Two-step meal picker modal */}
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setOpen(false)}>
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60" onClick={() => setOpen(false)}>
           <div className="bg-white rounded-2xl shadow-2xl w-[90vw] h-[90vh] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
               <h2 className="text-xl font-bold text-gray-900">{step === 'main' ? 'Pick a meal' : 'Add sides'}</h2>
@@ -210,31 +221,77 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
         </div>
       )}
 
-      {/* Recipe detail modal */}
-      {viewingRecipe && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setViewingRecipe(null)}>
-          <div className="bg-white rounded-2xl shadow-2xl w-[90vw] max-h-[90vh] overflow-y-auto p-6" onClick={e => e.stopPropagation()}>
-            <div className="flex justify-between items-start mb-4">
-              <h2 className="text-2xl font-bold text-gray-900">{viewingRecipe.name}</h2>
-              <button onClick={() => setViewingRecipe(null)} className="text-gray-400 hover:text-gray-600 text-2xl leading-none">×</button>
+      {/* Meal management modal */}
+      {viewingAll && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => { setViewingAll(false); setExpandedIds(new Set()); setRecipeDetails({}) }}>
+          <div className="bg-white rounded-2xl shadow-2xl w-[90vw] max-h-[90vh] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+              <h2 className="text-xl font-bold text-gray-900">{dayName}</h2>
+              <button onClick={() => { setViewingAll(false); setExpandedIds(new Set()); setRecipeDetails({}) }} className="text-gray-400 hover:text-gray-600 text-3xl leading-none">×</button>
             </div>
-            {viewingRecipe.image && <img src={viewingRecipe.image} alt={viewingRecipe.name} className="w-full max-h-64 object-cover rounded-xl mb-4" />}
-            {viewingRecipe.components?.map((component, i) => (
-              <div key={i} className="mb-4">
-                {component.name && <h3 className="font-semibold text-gray-700 mb-1">{component.name}</h3>}
-                <ul className="text-sm text-gray-600 space-y-0.5">
-                  {component.ingredients?.map((ing, j) => (
-                    <li key={j}>• {ing.revisedMeasurement ?? ing.measurement} {ing.ingredientName?.name}{ing.note ? ` (${ing.note})` : ''}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-            {viewingRecipe.steps?.map((recipeStep, i) => (
-              <p key={i} className="text-sm text-gray-700 mb-2"><span className="font-semibold">{i + 1}.</span> {recipeStep.detail}</p>
-            ))}
+            <div className="overflow-y-auto p-4 space-y-3">
+              {allRecipes.length === 0 && (
+                <p className="text-center text-gray-400 py-8">No meals planned yet.</p>
+              )}
+              {allRecipes.map(r => (
+                <div key={r.recipeId} className="border border-gray-200 rounded-xl overflow-hidden">
+                  <div className="flex items-center gap-3 p-3">
+                    <button
+                      onClick={() => toggleExpanded(r.recipeId)}
+                      className="flex items-center gap-3 flex-1 min-w-0 text-left hover:opacity-75"
+                    >
+                      {r.image
+                        ? <img src={r.image} alt={r.name} className="w-16 h-16 rounded object-cover flex-shrink-0" />
+                        : <div className="w-16 h-16 rounded bg-amber-50 flex items-center justify-center text-2xl flex-shrink-0">🍽️</div>
+                      }
+                      <span className="font-medium text-gray-800 flex-1">{r.name}</span>
+                      <span className="text-gray-400 text-sm">{expandedIds.has(r.recipeId) ? '▲' : '▼'}</span>
+                    </button>
+                    <button
+                      onClick={() => r.isMain ? handleRemoveMain() : handleRemoveSide(r.recipeId)}
+                      className="text-gray-300 hover:text-red-500 flex-shrink-0 text-xl leading-none px-1"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  {expandedIds.has(r.recipeId) && (
+                    <div className="px-4 pb-4 border-t border-gray-100">
+                      {recipeDetails[r.recipeId] ? (
+                        <>
+                          {recipeDetails[r.recipeId].components?.map((component, i) => (
+                            <div key={i} className="mb-4 mt-3">
+                              {component.name && <h3 className="font-semibold text-gray-700 mb-1">{component.name}</h3>}
+                              <ul className="text-sm text-gray-600 space-y-0.5">
+                                {component.ingredients?.map((ing, j) => (
+                                  <li key={j}>• {ing.revisedMeasurement ?? ing.measurement} {ing.ingredientName?.name}{ing.note ? ` (${ing.note})` : ''}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
+                          {recipeDetails[r.recipeId].steps?.map((recipeStep, i) => (
+                            <p key={i} className="text-sm text-gray-700 mb-2"><span className="font-semibold">{i + 1}.</span> {recipeStep.detail}</p>
+                          ))}
+                        </>
+                      ) : (
+                        <div className="text-center text-gray-400 py-4 text-sm">Loading…</div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className="px-6 py-4 border-t border-gray-200">
+              <button
+                onClick={() => setOpen(true)}
+                className="w-full py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium"
+              >
+                {allRecipes.length === 0 ? 'Add meal' : 'Change meal'}
+              </button>
+            </div>
           </div>
         </div>
       )}
+
     </>
   )
 }
