@@ -71,4 +71,10 @@ class FamilyMember
     {
         return $this->createdAt;
     }
+
+    #[ORM\PrePersist]
+    public function initCreatedAt(): void
+    {
+        $this->createdAt ??= new DateTimeImmutable();
+    }
 }
