@@ -1,53 +1,104 @@
 import { useState, useEffect } from 'react'
-import { getRecipe, getRecipes } from '../../api/cookbook'
+import { getRecipe, getRecipes, getSuggestedSides } from '../../api/cookbook'
 import { assignMeal, clearMeal } from '../../api/mealPlanner'
 
+function RecipeCard({ r, onClick, selected }) {
+  return (
+    <button
+      onClick={() => onClick(r.id)}
+      className={`flex flex-col items-center rounded-xl border overflow-hidden hover:shadow text-left ${selected ? 'border-amber-400 ring-2 ring-amber-400' : 'border-gray-200 hover:border-amber-400'}`}
+    >
+      {r.image
+        ? <img src={r.image} alt={r.name} className="w-full h-32 object-cover" />
+        : <div className="w-full h-32 bg-amber-50 flex items-center justify-center text-3xl">🍽️</div>
+      }
+      <span className="p-2 text-sm font-medium text-gray-800 text-center">{r.name}</span>
+    </button>
+  )
+}
+
 export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated }) {
-  const [picking, setPicking] = useState(false)
+  const [open, setOpen] = useState(false)
+  const [step, setStep] = useState('main') // 'main' | 'sides'
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [recipes, setRecipes] = useState([])
-  const [viewingRecipe, setViewingRecipe] = useState(null) // full recipe object
+  const [selectedMainId, setSelectedMainId] = useState(null)
+  const [selectedSideIds, setSelectedSideIds] = useState(new Set())
+  const [suggestedSides, setSuggestedSides] = useState([])
+  const [allOtherSides, setAllOtherSides] = useState([])
+  const [viewingRecipe, setViewingRecipe] = useState(null)
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search), 1000)
     return () => clearTimeout(t)
   }, [search])
 
+  // Step 1: only mains
   useEffect(() => {
-    if (picking) getRecipes(debouncedSearch).then(setRecipes)
-  }, [debouncedSearch, picking])
+    if (!open || step !== 'main') return
+    let cancelled = false
+    getRecipes(debouncedSearch, { course: 'main' }).then(r => { if (!cancelled) setRecipes(r) })
+    return () => { cancelled = true }
+  }, [debouncedSearch, open, step])
 
-  // ponytail: reset search when picker closes so stale results don't flash on reopen
+  // Step 2 entry: fetch suggested sides, then all other sides excluding them
   useEffect(() => {
-    if (!picking) { setSearch(''); setRecipes([]) }
-  }, [picking])
+    if (step !== 'sides' || !selectedMainId) return
+    setSearch('')
+    setRecipes([])
+    setSuggestedSides([])
+    setAllOtherSides([])
+    let cancelled = false
+    getSuggestedSides(selectedMainId).then(sides => {
+      if (cancelled) return
+      setSuggestedSides(sides)
+      const excludeIds = sides.map(s => s.id)
+      getRecipes('', { course: 'side', excludeIds }).then(r => { if (!cancelled) setAllOtherSides(r) })
+    })
+    return () => { cancelled = true }
+  }, [step, selectedMainId])
 
-  async function handleTapRecipe(recipeId) {
-    const data = await getRecipe(recipeId)
-    setViewingRecipe(data)
+  // Step 2 search: sides matching query, excluding suggested
+  useEffect(() => {
+    if (!open || step !== 'sides') return
+    if (!debouncedSearch) { setRecipes([]); return }
+    const excludeIds = suggestedSides.map(s => s.id)
+    let cancelled = false
+    getRecipes(debouncedSearch, { course: 'side', excludeIds }).then(r => { if (!cancelled) setRecipes(r) })
+    return () => { cancelled = true }
+  }, [debouncedSearch, open, step, suggestedSides])
+
+  // ponytail: reset all modal state when closed so stale results don't flash on reopen
+  useEffect(() => {
+    if (!open) {
+      setStep('main')
+      setSearch('')
+      setRecipes([])
+      setSelectedMainId(null)
+      setSelectedSideIds(new Set())
+      setSuggestedSides([])
+      setAllOtherSides([])
+    }
+  }, [open])
+
+  function toggleSide(id) {
+    setSelectedSideIds(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id); else next.add(id)
+      return next
+    })
   }
 
-  async function handleAssign(recipeId) {
-    const currentMain = meal?.main?.recipeId
-    const currentSides = meal?.sides?.map(s => s.recipeId) ?? []
-
-    if (!currentMain) {
-      // No main yet — set this as main
-      await assignMeal(weekStartDate, dayName, recipeId, currentSides)
-    } else {
-      // Main exists — add as side
-      await assignMeal(weekStartDate, dayName, currentMain, [...currentSides, recipeId])
-    }
-    setPicking(false)
-    setSearch('')
+  async function handleConfirm() {
+    await assignMeal(weekStartDate, dayName, selectedMainId, [...selectedSideIds])
+    setOpen(false)
     onMealUpdated()
   }
 
   async function handleRemoveMain() {
     const sides = meal?.sides ?? []
     if (sides.length > 0) {
-      // Promote first side to main
       await assignMeal(weekStartDate, dayName, sides[0].recipeId, sides.slice(1).map(s => s.recipeId))
     } else {
       await clearMeal(weekStartDate, dayName)
@@ -66,12 +117,14 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
     ...(meal?.sides ?? []).map(s => ({ ...s, isMain: false })),
   ]
 
+  const sideResults = debouncedSearch ? recipes : allOtherSides
+
   return (
     <>
       <div className="border-l border-amber-200 bg-amber-50 flex-shrink-0 w-32 overflow-y-auto">
         {allRecipes.map((r) => (
           <div key={r.recipeId} className="flex items-center gap-2 px-2 py-1 border-b border-amber-100 last:border-b-0">
-            <button onClick={() => handleTapRecipe(r.recipeId)} className="flex items-center gap-2 flex-1 min-w-0 text-left">
+            <button onClick={() => getRecipe(r.recipeId).then(setViewingRecipe)} className="flex items-center gap-2 flex-1 min-w-0 text-left">
               {r.image
                 ? <img src={r.image} alt={r.name} className="w-8 h-8 rounded object-cover flex-shrink-0" />
                 : <div className="w-8 h-8 rounded bg-amber-200 flex items-center justify-center text-sm flex-shrink-0">🍽️</div>
@@ -87,52 +140,72 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
           </div>
         ))}
         <button
-          onClick={() => setPicking(true)}
+          onClick={() => setOpen(true)}
           className="w-full py-1 text-xs text-amber-500 hover:text-amber-700 hover:bg-amber-100 flex items-center justify-center gap-1"
         >
           <span>+</span>
-          <span>{allRecipes.length === 0 ? 'Add meal' : 'Add side'}</span>
+          <span>{allRecipes.length === 0 ? 'Add meal' : 'Change'}</span>
         </button>
       </div>
 
-      {/* Recipe picker */}
-      {picking && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setPicking(false)}>
+      {/* Two-step meal picker modal */}
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setOpen(false)}>
           <div className="bg-white rounded-2xl shadow-2xl w-[90vw] h-[90vh] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900">{meal?.main ? 'Add a side' : 'Pick a meal'}</h2>
-              <button onClick={() => setPicking(false)} className="text-gray-400 hover:text-gray-600 text-3xl leading-none">×</button>
+              <h2 className="text-xl font-bold text-gray-900">{step === 'main' ? 'Pick a meal' : 'Add sides'}</h2>
+              <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600 text-3xl leading-none">×</button>
             </div>
             <div className="px-6 py-3 border-b border-gray-200">
               <input
                 type="text"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                placeholder="Search by name or ingredient…"
+                placeholder={step === 'main' ? 'Search by name or ingredient…' : 'Search for more sides…'}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
                 autoFocus
               />
             </div>
-            <div className="flex-1 overflow-y-auto p-4 grid grid-cols-3 gap-3">
-              {recipes.map(r => (
-                <button
-                  key={r.id}
-                  onClick={() => handleAssign(r.id)}
-                  className="flex flex-col items-center rounded-xl border border-gray-200 overflow-hidden hover:border-amber-400 hover:shadow text-left"
-                >
-                  {r.image
-                    ? <img src={r.image} alt={r.name} className="w-full h-32 object-cover" />
-                    : <div className="w-full h-32 bg-amber-50 flex items-center justify-center text-3xl">🍽️</div>
-                  }
-                  <span className="p-2 text-sm font-medium text-gray-800 text-center">{r.name}</span>
-                </button>
-              ))}
-              {recipes.length === 0 && (
-                <div className="col-span-3 text-center text-gray-400 mt-12">
-                  No recipes found
+            <div className="flex-1 overflow-y-auto p-4">
+              {step === 'main' ? (
+                <div className="grid grid-cols-3 gap-3">
+                  {recipes.map(r => <RecipeCard key={r.id} r={r} onClick={id => { setSelectedMainId(id); setStep('sides') }} />)}
+                  {recipes.length === 0 && <div className="col-span-3 text-center text-gray-400 mt-12">No recipes found</div>}
                 </div>
+              ) : (
+                <>
+                  {suggestedSides.length > 0 && (
+                    <>
+                      <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Suggested sides</h3>
+                      <div className="grid grid-cols-3 gap-3 mb-6">
+                        {suggestedSides.map(r => <RecipeCard key={r.id} r={r} onClick={toggleSide} selected={selectedSideIds.has(r.id)} />)}
+                      </div>
+                    </>
+                  )}
+                  {sideResults.length > 0 && (
+                    <>
+                      <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                        {suggestedSides.length > 0 ? 'Other sides' : 'Sides'}
+                      </h3>
+                      <div className="grid grid-cols-3 gap-3">
+                        {sideResults.map(r => <RecipeCard key={r.id} r={r} onClick={toggleSide} selected={selectedSideIds.has(r.id)} />)}
+                      </div>
+                    </>
+                  )}
+                  {suggestedSides.length === 0 && sideResults.length === 0 && (
+                    <div className="text-center text-gray-400 mt-12">No sides found. Search above to add any recipe as a side.</div>
+                  )}
+                </>
               )}
             </div>
+            {step === 'sides' && (
+              <div className="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+                <button onClick={() => setStep('main')} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">← Back</button>
+                <button onClick={handleConfirm} className="px-6 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium">
+                  Confirm{selectedSideIds.size > 0 ? ` (${selectedSideIds.size} side${selectedSideIds.size > 1 ? 's' : ''})` : ''}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -156,8 +229,8 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
                 </ul>
               </div>
             ))}
-            {viewingRecipe.steps?.map((step, i) => (
-              <p key={i} className="text-sm text-gray-700 mb-2"><span className="font-semibold">{i + 1}.</span> {step.detail}</p>
+            {viewingRecipe.steps?.map((recipeStep, i) => (
+              <p key={i} className="text-sm text-gray-700 mb-2"><span className="font-semibold">{i + 1}.</span> {recipeStep.detail}</p>
             ))}
           </div>
         </div>
