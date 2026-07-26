@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Event;
+use DateTimeImmutable;
+use DateTimeInterface;
 
 /**
  * Expands recurring events into concrete occurrence dates within a range.
@@ -13,15 +15,15 @@ class RecurrenceExpander
 {
     /**
      * @param Event[] $candidates
-     * @return array<int, array{event: Event, occurrenceDate: \DateTimeImmutable}>
+     * @return array<int, array{event: Event, occurrenceDate: DateTimeImmutable}>
      */
-    public function expand(array $candidates, \DateTimeInterface $from, \DateTimeInterface $to): array
+    public function expand(array $candidates, DateTimeInterface $from, DateTimeInterface $to): array
     {
         $results = [];
 
         foreach ($candidates as $event) {
             if (!$event->isRecurring()) {
-                $results[] = ['event' => $event, 'occurrenceDate' => \DateTimeImmutable::createFromInterface($event->getStartAt())];
+                $results[] = ['event' => $event, 'occurrenceDate' => DateTimeImmutable::createFromInterface($event->getStartAt())];
                 continue;
             }
 
@@ -35,14 +37,14 @@ class RecurrenceExpander
         return $results;
     }
 
-    /** @return \DateTimeImmutable[] */
-    private function occurrences(Event $event, \DateTimeInterface $from, \DateTimeInterface $to): array
+    /** @return DateTimeImmutable[] */
+    private function occurrences(Event $event, DateTimeInterface $from, DateTimeInterface $to): array
     {
         $frequency = $event->getRecurrenceFrequency();
         $interval  = $event->getRecurrenceInterval();
         $days      = $event->getRecurrenceDaysOfWeek();
         $until     = $event->getRecurrenceUntil();
-        $start     = \DateTimeImmutable::createFromInterface($event->getStartAt());
+        $start     = DateTimeImmutable::createFromInterface($event->getStartAt());
         $rangeEnd  = min($to, $until ?? $to);
 
         $dates  = [];
@@ -65,7 +67,7 @@ class RecurrenceExpander
         return $dates;
     }
 
-    private function matchesDay(\DateTimeImmutable $date, ?array $days): bool
+    private function matchesDay(DateTimeImmutable $date, ?array $days): bool
     {
         if ($days === null || $days === []) {
             return true;

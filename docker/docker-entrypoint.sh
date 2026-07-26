@@ -11,7 +11,7 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
     ./bin/console assets:install
 
     echo "Waiting for database..."
-    until ./bin/console doctrine:query:sql "SELECT 1" --no-interaction > /dev/null 2>&1; do
+    until ./bin/console dbal:run-sql "SELECT 1" --no-interaction > /dev/null 2>&1; do
         sleep 2
     done
 

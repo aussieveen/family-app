@@ -18,6 +18,11 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
     if (picking) getRecipes(debouncedSearch).then(setRecipes)
   }, [debouncedSearch, picking])
 
+  // ponytail: reset search when picker closes so stale results don't flash on reopen
+  useEffect(() => {
+    if (!picking) { setSearch(''); setRecipes([]) }
+  }, [picking])
+
   async function handleTapRecipe(recipeId) {
     const data = await getRecipe(recipeId)
     setViewingRecipe(data)
@@ -124,7 +129,7 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
               ))}
               {recipes.length === 0 && (
                 <div className="col-span-3 text-center text-gray-400 mt-12">
-                  {debouncedSearch ? 'No recipes found' : 'Start typing to search…'}
+                  No recipes found
                 </div>
               )}
             </div>

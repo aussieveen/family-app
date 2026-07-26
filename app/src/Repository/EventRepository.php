@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Event;
+use DateTimeInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -25,7 +26,7 @@ class EventRepository extends ServiceEntityRepository
      *
      * @return Event[]
      */
-    public function findCandidatesForRange(\DateTimeInterface $from, \DateTimeInterface $to): array
+    public function findCandidatesForRange(DateTimeInterface $from, DateTimeInterface $to): array
     {
         return $this->createQueryBuilder('e')
             ->where(

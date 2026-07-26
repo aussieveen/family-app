@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\EventRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -23,10 +24,10 @@ class Event
     private string $title;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
-    private \DateTimeImmutable $startAt;
+    private DateTimeImmutable $startAt;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    private ?\DateTimeImmutable $endAt = null;
+    private ?DateTimeImmutable $endAt = null;
 
     #[ORM\Column]
     private bool $allDay = false;
@@ -43,10 +44,10 @@ class Event
     private ?array $recurrenceDaysOfWeek = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
-    private ?\DateTimeImmutable $recurrenceUntil = null;
+    private ?DateTimeImmutable $recurrenceUntil = null;
 
     #[ORM\Column]
-    private \DateTimeImmutable $createdAt;
+    private DateTimeImmutable $createdAt;
 
     /** @var Collection<int, Participant> */
     #[ORM\OneToMany(targetEntity: Participant::class, mappedBy: 'event', cascade: ['persist', 'remove'], orphanRemoval: true)]
@@ -56,11 +57,11 @@ class Event
     #[ORM\OneToMany(targetEntity: Responsibility::class, mappedBy: 'event', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $responsibilities;
 
-    public function __construct(string $title, \DateTimeInterface $startAt)
+    public function __construct(string $title, DateTimeImmutable $startAt)
     {
         $this->title          = $title;
         $this->startAt        = $startAt;
-        $this->createdAt      = new \DateTimeImmutable();
+        $this->createdAt      = new DateTimeImmutable();
         $this->participants   = new ArrayCollection();
         $this->responsibilities = new ArrayCollection();
     }
@@ -82,24 +83,24 @@ class Event
         return $this;
     }
 
-    public function getStartAt(): \DateTimeImmutable
+    public function getStartAt(): DateTimeImmutable
     {
         return $this->startAt;
     }
 
-    public function setStartAt(\DateTimeImmutable $startAt): static
+    public function setStartAt(DateTimeImmutable $startAt): static
     {
         $this->startAt = $startAt;
 
         return $this;
     }
 
-    public function getEndAt(): ?\DateTimeImmutable
+    public function getEndAt(): ?DateTimeImmutable
     {
         return $this->endAt;
     }
 
-    public function setEndAt(?\DateTimeImmutable $endAt): static
+    public function setEndAt(?DateTimeImmutable $endAt): static
     {
         $this->endAt = $endAt;
 
@@ -154,19 +155,19 @@ class Event
         return $this;
     }
 
-    public function getRecurrenceUntil(): ?\DateTimeImmutable
+    public function getRecurrenceUntil(): ?DateTimeImmutable
     {
         return $this->recurrenceUntil;
     }
 
-    public function setRecurrenceUntil(?\DateTimeImmutable $recurrenceUntil): static
+    public function setRecurrenceUntil(?DateTimeImmutable $recurrenceUntil): static
     {
         $this->recurrenceUntil = $recurrenceUntil;
 
         return $this;
     }
 
-    public function getCreatedAt(): \DateTimeImmutable
+    public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
     }

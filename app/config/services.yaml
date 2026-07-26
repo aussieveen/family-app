@@ -21,3 +21,10 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Admin\FamilyMemberAdmin:
+        tags:
+            - name: sonata.admin
+              model_class: App\Entity\FamilyMember
+              manager_type: orm
+              label: Family Members

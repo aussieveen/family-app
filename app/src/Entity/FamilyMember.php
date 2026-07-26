@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\FamilyMemberRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
 
@@ -28,13 +29,13 @@ class FamilyMember
 
     #[ORM\Column]
     #[Groups(['member:read'])]
-    private \DateTimeImmutable $createdAt;
+    private DateTimeImmutable $createdAt;
 
     public function __construct(string $name, string $avatarColour)
     {
         $this->name         = $name;
         $this->avatarColour = $avatarColour;
-        $this->createdAt    = new \DateTimeImmutable();
+        $this->createdAt    = new DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -66,7 +67,7 @@ class FamilyMember
         return $this;
     }
 
-    public function getCreatedAt(): \DateTimeImmutable
+    public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
     }

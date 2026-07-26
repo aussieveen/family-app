@@ -19,3 +19,12 @@ app.swagger_json:
     path: /api/doc.json
     methods: GET
     defaults: { _controller: nelmio_api_doc.controller.swagger_json }
+
+admin:
+    resource: '@SonataAdminBundle/Resources/config/routing/sonata_admin.php'
+    prefix: /admin
+
+_sonata_admin:
+    resource: .
+    type: sonata_admin
+    prefix: /admin

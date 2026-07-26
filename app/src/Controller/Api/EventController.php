@@ -10,6 +10,7 @@ use App\Entity\Responsibility;
 use App\Repository\EventRepository;
 use App\Repository\FamilyMemberRepository;
 use App\Service\RecurrenceExpander;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -38,8 +39,8 @@ class EventController extends AbstractController
     #[OA\Response(response: 400, description: 'Invalid date parameters')]
     public function list(Request $request): JsonResponse
     {
-        $from = \DateTimeImmutable::createFromFormat('Y-m-d', $request->query->getString('from'));
-        $to   = \DateTimeImmutable::createFromFormat('Y-m-d', $request->query->getString('to'));
+        $from = DateTimeImmutable::createFromFormat('Y-m-d', $request->query->getString('from'));
+        $to   = DateTimeImmutable::createFromFormat('Y-m-d', $request->query->getString('to'));
 
         if ($from === false || $to === false) {
             return $this->json(['error' => 'from and to must be dates in YYYY-MM-DD format'], Response::HTTP_BAD_REQUEST);
@@ -140,19 +141,19 @@ class EventController extends AbstractController
     private function buildEvent(array $body, ?Event $event = null): array
     {
         if (empty($body['title'])) {
-            return ['title is required', new Event('', new \DateTimeImmutable())];
+            return ['title is required', new Event('', new DateTimeImmutable())];
         }
 
         if (empty($body['startAt'])) {
-            return ['startAt is required', new Event('', new \DateTimeImmutable())];
+            return ['startAt is required', new Event('', new DateTimeImmutable())];
         }
 
-        $startAt = \DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $body['startAt'])
-            ?: \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $body['startAt'])
-            ?: \DateTimeImmutable::createFromFormat('Y-m-d', $body['startAt']);
+        $startAt = DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $body['startAt'])
+            ?: DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $body['startAt'])
+            ?: DateTimeImmutable::createFromFormat('Y-m-d', $body['startAt']);
 
         if ($startAt === false) {
-            return ['startAt must be a valid ISO 8601 date', new Event('', new \DateTimeImmutable())];
+            return ['startAt must be a valid ISO 8601 date', new Event('', new DateTimeImmutable())];
         }
 
         if ($event === null) {
@@ -165,9 +166,9 @@ class EventController extends AbstractController
         $event->setAllDay((bool) ($body['allDay'] ?? false));
 
         if (!empty($body['endAt'])) {
-            $endAt = \DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $body['endAt'])
-                ?: \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $body['endAt'])
-                ?: \DateTimeImmutable::createFromFormat('Y-m-d', $body['endAt']);
+            $endAt = DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $body['endAt'])
+                ?: DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $body['endAt'])
+                ?: DateTimeImmutable::createFromFormat('Y-m-d', $body['endAt']);
             $event->setEndAt($endAt ?: null);
         } else {
             $event->setEndAt(null);
@@ -181,7 +182,7 @@ class EventController extends AbstractController
             $event->setRecurrenceDaysOfWeek($recurrence['daysOfWeek'] ?? null);
 
             $until = isset($recurrence['until'])
-                ? \DateTimeImmutable::createFromFormat('Y-m-d', $recurrence['until'])
+                ? DateTimeImmutable::createFromFormat('Y-m-d', $recurrence['until'])
                 : false;
             $event->setRecurrenceUntil($until ?: null);
         } else {
@@ -211,7 +212,7 @@ class EventController extends AbstractController
         return [null, $event];
     }
 
-    private function formatOccurrence(Event $event, \DateTimeImmutable $occurrenceDate): array
+    private function formatOccurrence(Event $event, DateTimeImmutable $occurrenceDate): array
     {
         $data                  = $this->formatEvent($event);
         $data['occurrenceDate'] = $occurrenceDate->format('Y-m-d');
