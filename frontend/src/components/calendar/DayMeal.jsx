@@ -68,7 +68,7 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
 
   return (
     <>
-      <div className="border-t border-amber-200 bg-amber-50 flex-shrink-0">
+      <div className="border-l border-amber-200 bg-amber-50 flex-shrink-0 w-32 overflow-y-auto">
         {allRecipes.map((r) => (
           <div key={r.recipeId} className="flex items-center gap-2 px-2 py-1 border-b border-amber-100 last:border-b-0">
             <button onClick={() => handleTapRecipe(r.recipeId)} className="flex items-center gap-2 flex-1 min-w-0 text-left">

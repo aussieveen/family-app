@@ -1,3 +1,7 @@
+## Git
+
+Never run `git commit` or create commits on the user's behalf. Prepare changes and stage them if asked, but always leave committing to the user.
+
 ## Agent skills
 
 ### Issue tracker

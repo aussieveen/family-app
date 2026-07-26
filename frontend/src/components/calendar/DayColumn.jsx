@@ -6,10 +6,10 @@ export default function DayColumn({ day, events, meal, weekStartDate, today, onA
   const dayName = format(day, 'EEEE').toLowerCase()
 
   return (
-    <div className={`flex flex-col flex-1 min-w-0 border-r border-gray-200 last:border-r-0 ${today ? 'bg-blue-50' : 'bg-white'}`}>
-      {/* Day header */}
-      <div className={`flex items-center justify-between px-2 py-2 border-b border-gray-200 ${today ? 'bg-blue-100' : 'bg-gray-50'}`}>
-        <div>
+    <div className={`flex flex-row flex-1 min-h-0 border-b border-gray-200 last:border-b-0 ${today ? 'bg-blue-50' : 'bg-white'}`}>
+      {/* Day header — left strip */}
+      <div className={`flex flex-col items-center justify-between px-2 py-2 border-r border-gray-200 w-14 flex-shrink-0 ${today ? 'bg-blue-100' : 'bg-gray-50'}`}>
+        <div className="text-center">
           <div className={`text-xs font-medium uppercase tracking-wide ${today ? 'text-blue-600' : 'text-gray-500'}`}>
             {format(day, 'EEE')}
           </div>
