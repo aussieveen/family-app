@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { format, startOfWeek, addDays, addWeeks, subWeeks, isSameDay, isToday } from 'date-fns'
+import { format, startOfWeek, addDays, addWeeks, subWeeks, isToday } from 'date-fns'
 import { getEvents } from '../../api/familyApp'
 import { getPlan } from '../../api/mealPlanner'
 import DayColumn from './DayColumn'
@@ -41,23 +41,40 @@ export default function WeekCalendar({ members }) {
   return (
     <div className="flex flex-col h-full">
       {/* Week nav */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200">
+      <div className="flex items-center justify-between px-[18px] py-4 bg-header-bg border-b border-line">
         <button
           onClick={() => setWeekStart(w => subWeeks(w, 1))}
-          className="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200 text-sm font-medium"
+          className="flex items-center gap-1.5 bg-white/70 rounded-[10px] px-[14px] py-[10px] text-[14px] font-bold text-ink min-h-[40px] border-0 cursor-pointer"
         >
           ← Prev
         </button>
-        <span className="font-semibold text-gray-700">
+        <span className="text-[15px] font-extrabold tracking-[0.01em] text-ink">
           {format(weekStart, 'MMM d')} – {format(days[6], 'MMM d, yyyy')}
         </span>
         <button
           onClick={() => setWeekStart(w => addWeeks(w, 1))}
-          className="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200 text-sm font-medium"
+          className="flex items-center gap-1.5 bg-white/70 rounded-[10px] px-[14px] py-[10px] text-[14px] font-bold text-ink min-h-[40px] border-0 cursor-pointer"
         >
           Next →
         </button>
       </div>
+
+      {/* Family legend */}
+      {members.length > 0 && (
+        <div className="flex gap-[14px] items-center px-[18px] py-[10px] border-b border-line flex-wrap">
+          {members.map(m => (
+            <div key={m.id} className="flex items-center gap-1.5 text-[12.5px] font-semibold text-ink-soft">
+              <span
+                className="w-[18px] h-[18px] rounded-full flex items-center justify-center text-[9.5px] font-extrabold text-white flex-shrink-0"
+                style={{ backgroundColor: m.avatarColour }}
+              >
+                {m.name[0]}
+              </span>
+              {m.name}
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Day rows */}
       <div className="flex flex-col flex-1 overflow-hidden">

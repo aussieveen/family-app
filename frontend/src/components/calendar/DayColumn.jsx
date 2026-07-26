@@ -6,31 +6,35 @@ export default function DayColumn({ day, events, meal, weekStartDate, today, onA
   const dayName = format(day, 'EEEE').toLowerCase()
 
   return (
-    <div className={`flex flex-row flex-1 min-h-0 border-b border-gray-200 last:border-b-0 ${today ? 'bg-blue-50' : 'bg-white'}`}>
-      {/* Day header — left strip */}
-      <div className={`flex flex-col items-center justify-between px-2 py-2 border-r border-gray-200 w-14 flex-shrink-0 ${today ? 'bg-blue-100' : 'bg-gray-50'}`}>
-        <div className="text-center">
-          <div className={`text-xs font-medium uppercase tracking-wide ${today ? 'text-blue-600' : 'text-gray-500'}`}>
-            {format(day, 'EEE')}
-          </div>
-          <div className={`text-lg font-bold ${today ? 'text-blue-700' : 'text-gray-800'}`}>
-            {format(day, 'd')}
-          </div>
-        </div>
-        <button
-          onClick={onAddEvent}
-          className={`w-7 h-7 flex items-center justify-center rounded-full text-lg font-light hover:bg-blue-200 ${today ? 'text-blue-600' : 'text-gray-400 hover:text-blue-600'}`}
-          title="Add event"
-        >
-          +
-        </button>
+    <div
+      className={`grid flex-1 min-h-[128px] border-b border-line last:border-b-0 relative ${today ? 'bg-today-bg' : 'bg-card-bg'}`}
+      style={{ gridTemplateColumns: '74px 1fr 156px' }}
+    >
+      {/* Today left-edge stripe */}
+      {today && <div className="absolute left-0 top-0 bottom-0 bg-today-accent" style={{ width: 4 }} />}
+
+      {/* Day label */}
+      <div className="flex flex-col gap-0.5 pt-[14px] pb-[10px] pl-4 pr-[10px] border-r border-line">
+        <span className={`text-[11.5px] font-extrabold uppercase tracking-[0.06em] ${today ? 'text-today-accent' : 'text-ink-soft'}`}>
+          {format(day, 'EEE')}
+        </span>
+        <span className="text-[21px] font-extrabold text-ink leading-none">
+          {format(day, 'd')}
+        </span>
       </div>
 
       {/* Events */}
-      <div className="flex flex-col gap-1 p-1 flex-1 overflow-y-auto">
+      <div className="flex flex-col gap-2 p-[10px_12px] overflow-y-auto border-r border-line">
         {events.map(event => (
           <EventCard key={`${event.id}-${event.occurrenceDate}`} event={event} onClick={() => onSelectEvent(event)} />
         ))}
+        <button
+          onClick={onAddEvent}
+          className="self-start flex items-center gap-1.5 text-[13px] font-bold text-ink-soft min-h-[40px] px-3 py-2 rounded-xl cursor-pointer border-0 bg-transparent"
+          style={{ border: '1.5px dashed rgba(0,0,0,0.15)' }}
+        >
+          + Add event
+        </button>
       </div>
 
       {/* Meal */}

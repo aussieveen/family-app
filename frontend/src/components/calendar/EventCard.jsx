@@ -1,23 +1,25 @@
 import { format, parseISO } from 'date-fns'
 
 export default function EventCard({ event, onClick }) {
-  const whoColours = event.who?.slice(0, 3) ?? []
+  const who = event.who?.slice(0, 3) ?? []
 
   return (
     <button
       onClick={onClick}
-      className="w-full text-left rounded-md px-2 py-1 bg-indigo-100 hover:bg-indigo-200 border border-indigo-200 text-xs"
+      className="w-full text-left rounded-xl px-[10px] py-2 bg-event-bg border border-event-border text-[13.5px] cursor-pointer"
     >
-      <div className="font-medium text-indigo-900 truncate">{event.title}</div>
+      <div className="font-extrabold text-ink truncate">{event.title}</div>
       {!event.allDay && (
-        <div className="text-indigo-600">{format(parseISO(event.startAt), 'HH:mm')}</div>
+        <div className="text-[12px] font-bold text-event-text mt-px">
+          {format(parseISO(event.startAt), 'HH:mm')}
+        </div>
       )}
-      {whoColours.length > 0 && (
-        <div className="flex gap-0.5 mt-1">
-          {whoColours.map(p => (
+      {who.length > 0 && (
+        <div className="flex gap-1 mt-1.5">
+          {who.map(p => (
             <span
               key={p.id}
-              className="w-3 h-3 rounded-full inline-block border border-white"
+              className="w-[18px] h-[18px] rounded-full border-2 border-card-bg flex-shrink-0 inline-block"
               style={{ backgroundColor: p.avatarColour }}
               title={p.name}
             />
