@@ -6,7 +6,6 @@ namespace App\Controller\Api;
 
 use App\Entity\Event;
 use App\Entity\Participant;
-use App\Entity\Responsibility;
 use App\Repository\EventRepository;
 use App\Repository\FamilyMemberRepository;
 use App\Service\RecurrenceExpander;
@@ -191,21 +190,12 @@ class EventController extends AbstractController
             $event->setRecurrenceUntil(null);
         }
 
-        // Participants — replace all
-        $event->clearParticipants();
-        foreach ($body['participantIds'] ?? [] as $memberId) {
+        // Who — replace all
+        $event->clearWho();
+        foreach ($body['whoIds'] ?? [] as $memberId) {
             $member = $this->memberRepository->find((int) $memberId);
             if ($member !== null) {
-                $event->addParticipant(new Participant($event, $member));
-            }
-        }
-
-        // Responsibilities — replace all
-        $event->clearResponsibilities();
-        foreach ($body['responsibilities'] ?? [] as $r) {
-            $member = $this->memberRepository->find((int) ($r['memberId'] ?? 0));
-            if ($member !== null && !empty($r['label'])) {
-                $event->addResponsibility(new Responsibility($event, $member, $r['label']));
+                $event->addWho(new Participant($event, $member));
             }
         }
 
@@ -234,13 +224,9 @@ class EventController extends AbstractController
                 'daysOfWeek' => $event->getRecurrenceDaysOfWeek(),
                 'until'      => $event->getRecurrenceUntil()?->format('Y-m-d'),
             ] : null,
-            'participants'  => array_map(
+            'who'           => array_map(
                 fn($p) => ['id' => $p->getMember()->getId(), 'name' => $p->getMember()->getName(), 'avatarColour' => $p->getMember()->getAvatarColour()],
-                $event->getParticipants()->toArray()
-            ),
-            'responsibilities' => array_map(
-                fn($r) => ['id' => $r->getMember()->getId(), 'name' => $r->getMember()->getName(), 'avatarColour' => $r->getMember()->getAvatarColour(), 'label' => $r->getLabel()],
-                $event->getResponsibilities()->toArray()
+                $event->getWho()->toArray()
             ),
             'createdAt'     => $event->getCreatedAt()->format(\DateTimeInterface::ATOM),
         ];

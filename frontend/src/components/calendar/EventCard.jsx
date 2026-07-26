@@ -1,7 +1,7 @@
 import { format, parseISO } from 'date-fns'
 
 export default function EventCard({ event, onClick }) {
-  const participantColours = event.participants?.slice(0, 3) ?? []
+  const whoColours = event.who?.slice(0, 3) ?? []
 
   return (
     <button
@@ -12,9 +12,9 @@ export default function EventCard({ event, onClick }) {
       {!event.allDay && (
         <div className="text-indigo-600">{format(parseISO(event.startAt), 'HH:mm')}</div>
       )}
-      {participantColours.length > 0 && (
+      {whoColours.length > 0 && (
         <div className="flex gap-0.5 mt-1">
-          {participantColours.map(p => (
+          {whoColours.map(p => (
             <span
               key={p.id}
               className="w-3 h-3 rounded-full inline-block border border-white"

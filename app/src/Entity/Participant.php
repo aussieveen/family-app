@@ -14,7 +14,7 @@ class Participant
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Event::class, inversedBy: 'participants')]
+    #[ORM\ManyToOne(targetEntity: Event::class, inversedBy: 'who')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Event $event;
 

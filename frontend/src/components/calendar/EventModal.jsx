@@ -11,8 +11,7 @@ export default function EventModal({ event, defaultDate, members, onClose, onSav
   const [startAt, setStartAt] = useState(event?.startAt?.slice(0, 16) ?? (defaultDate ? `${defaultDate}T09:00` : ''))
   const [endAt, setEndAt] = useState(event?.endAt?.slice(0, 16) ?? (defaultDate ? `${defaultDate}T10:00` : ''))
   const [allDay, setAllDay] = useState(event?.allDay ?? false)
-  const [participantIds, setParticipantIds] = useState(event?.participants?.map(p => p.id) ?? [])
-  const [responsibilities, setResponsibilities] = useState(event?.responsibilities ?? [])
+  const [whoIds, setWhoIds] = useState(event?.who?.map(p => p.id) ?? [])
   const [recurring, setRecurring] = useState(!!event?.recurrence)
   const [frequency, setFrequency] = useState(event?.recurrence?.frequency ?? 'weekly')
   const [interval, setInterval] = useState(event?.recurrence?.interval ?? 1)
@@ -20,25 +19,12 @@ export default function EventModal({ event, defaultDate, members, onClose, onSav
   const [until, setUntil] = useState(event?.recurrence?.until ?? '')
   const [saving, setSaving] = useState(false)
 
-  function toggleParticipant(id) {
-    setParticipantIds(ids => ids.includes(id) ? ids.filter(i => i !== id) : [...ids, id])
+  function toggleWho(id) {
+    setWhoIds(ids => ids.includes(id) ? ids.filter(i => i !== id) : [...ids, id])
   }
 
   function toggleDay(day) {
     setDaysOfWeek(days => days.includes(day) ? days.filter(d => d !== day) : [...days, day])
-  }
-
-  function addResponsibility() {
-    if (members.length === 0) return
-    setResponsibilities(rs => [...rs, { memberId: members[0].id, label: '' }])
-  }
-
-  function updateResponsibility(index, field, value) {
-    setResponsibilities(rs => rs.map((r, i) => i === index ? { ...r, [field]: value } : r))
-  }
-
-  function removeResponsibility(index) {
-    setResponsibilities(rs => rs.filter((_, i) => i !== index))
   }
 
   async function handleSave() {
@@ -48,8 +34,7 @@ export default function EventModal({ event, defaultDate, members, onClose, onSav
       startAt: allDay ? `${startAt.slice(0, 10)}T00:00:00+00:00` : `${startAt}:00+00:00`,
       endAt: endAt ? `${endAt}:00+00:00` : null,
       allDay,
-      participantIds,
-      responsibilities: responsibilities.filter(r => r.label.trim()),
+      whoIds,
       recurrence: recurring ? { frequency, interval: Number(interval), daysOfWeek: frequency === 'weekly' ? daysOfWeek : null, until: until || null } : null,
     }
 
@@ -124,58 +109,29 @@ export default function EventModal({ event, defaultDate, members, onClose, onSav
             </div>
           </div>
 
-          {/* Participants */}
+          {/* Who */}
           {members.length > 0 && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Participants</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Who</label>
               <div className="flex flex-wrap gap-2">
                 {members.map(m => (
                   <button
                     key={m.id}
-                    onClick={() => toggleParticipant(m.id)}
+                    onClick={() => toggleWho(m.id)}
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium border-2 transition-all ${
-                      participantIds.includes(m.id)
+                      whoIds.includes(m.id)
                         ? 'border-transparent text-white'
                         : 'border-gray-300 text-gray-600 bg-white'
                     }`}
-                    style={participantIds.includes(m.id) ? { backgroundColor: m.avatarColour, borderColor: m.avatarColour } : {}}
+                    style={whoIds.includes(m.id) ? { backgroundColor: m.avatarColour, borderColor: m.avatarColour } : {}}
                   >
-                    <span className="w-3 h-3 rounded-full" style={{ backgroundColor: m.avatarColour }} />
+                    <span className="w-3 h-3 rounded-full inline-block" style={{ backgroundColor: m.avatarColour }} />
                     {m.name}
                   </button>
                 ))}
               </div>
             </div>
           )}
-
-          {/* Responsibilities */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-medium text-gray-700">Responsibilities</label>
-              <button onClick={addResponsibility} className="text-sm text-blue-600 hover:text-blue-800 font-medium">+ Add</button>
-            </div>
-            <div className="space-y-2">
-              {responsibilities.map((r, i) => (
-                <div key={i} className="flex gap-2 items-center">
-                  <select
-                    value={r.memberId}
-                    onChange={e => updateResponsibility(i, 'memberId', Number(e.target.value))}
-                    className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm flex-shrink-0"
-                  >
-                    {members.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-                  </select>
-                  <input
-                    type="text"
-                    value={r.label}
-                    onChange={e => updateResponsibility(i, 'label', e.target.value)}
-                    placeholder="e.g. drop-off, pick-up"
-                    className="flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  />
-                  <button onClick={() => removeResponsibility(i)} className="text-red-400 hover:text-red-600 font-bold text-lg leading-none">×</button>
-                </div>
-              ))}
-            </div>
-          </div>
 
           {/* Recurrence */}
           <div>

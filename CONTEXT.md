@@ -16,13 +16,9 @@ _Avoid_: User, account, profile
 Something happening at a specific date and time that involves one or more Family Members.
 _Avoid_: Appointment, activity, entry
 
-**Participant**:
-A Family Member who is affected by or present at an Event.
-_Avoid_: Attendee, invitee
-
-**Responsibility**:
-A named action on an Event assigned to a specific Family Member (e.g. "drop-off", "pick-up"). An Event can have many Responsibilities.
-_Avoid_: Task, assignment, duty
+**Who**:
+A Family Member included in an Event — someone affected by or present at it.
+_Avoid_: Participant, attendee, invitee
 
 **Recurrence Rule**:
 A rule that causes an Event to repeat on a schedule (e.g. every weekday, every Saturday).

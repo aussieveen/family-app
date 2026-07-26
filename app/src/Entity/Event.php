@@ -11,6 +11,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[ORM\Table(name: '`event`')]
 class Event
@@ -51,19 +52,14 @@ class Event
 
     /** @var Collection<int, Participant> */
     #[ORM\OneToMany(targetEntity: Participant::class, mappedBy: 'event', cascade: ['persist', 'remove'], orphanRemoval: true)]
-    private Collection $participants;
-
-    /** @var Collection<int, Responsibility> */
-    #[ORM\OneToMany(targetEntity: Responsibility::class, mappedBy: 'event', cascade: ['persist', 'remove'], orphanRemoval: true)]
-    private Collection $responsibilities;
+    private Collection $who;
 
     public function __construct(string $title, DateTimeImmutable $startAt)
     {
-        $this->title          = $title;
-        $this->startAt        = $startAt;
-        $this->createdAt      = new DateTimeImmutable();
-        $this->participants   = new ArrayCollection();
-        $this->responsibilities = new ArrayCollection();
+        $this->title    = $title;
+        $this->startAt  = $startAt;
+        $this->createdAt = new DateTimeImmutable();
+        $this->who      = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -178,47 +174,24 @@ class Event
     }
 
     /** @return Collection<int, Participant> */
-    public function getParticipants(): Collection
+    public function getWho(): Collection
     {
-        return $this->participants;
+        return $this->who;
     }
 
-    public function addParticipant(Participant $participant): static
+    public function addWho(Participant $participant): static
     {
-        if (!$this->participants->contains($participant)) {
-            $this->participants->add($participant);
+        if (!$this->who->contains($participant)) {
+            $this->who->add($participant);
             $participant->setEvent($this);
         }
 
         return $this;
     }
 
-    public function clearParticipants(): static
+    public function clearWho(): static
     {
-        $this->participants->clear();
-
-        return $this;
-    }
-
-    /** @return Collection<int, Responsibility> */
-    public function getResponsibilities(): Collection
-    {
-        return $this->responsibilities;
-    }
-
-    public function addResponsibility(Responsibility $responsibility): static
-    {
-        if (!$this->responsibilities->contains($responsibility)) {
-            $this->responsibilities->add($responsibility);
-            $responsibility->setEvent($this);
-        }
-
-        return $this;
-    }
-
-    public function clearResponsibilities(): static
-    {
-        $this->responsibilities->clear();
+        $this->who->clear();
 
         return $this;
     }
