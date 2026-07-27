@@ -411,7 +411,7 @@ function ItemCard({ r, expanded, onToggle, onRemove, details, onToggleFavourite 
         <div className="flex items-center gap-0.5 flex-shrink-0">
           <button
             className="w-9 h-9 rounded-[10px] flex items-center justify-center text-[19px] border-0 bg-transparent cursor-pointer"
-            style={{ color: isFavourite ? '#E05C4A' : '#97A08A', opacity: isFavourite === null ? 0.3 : 1 }}
+            style={{ color: isFavourite ? 'var(--color-favorite-accent)' : 'var(--color-favorite-muted)', opacity: isFavourite === null ? 0.3 : 1 }}
             onClick={e => { e.stopPropagation(); onToggleFavourite(r.recipeId) }}
             title={isFavourite ? 'Remove from favourites' : 'Add to favourites'}
           >

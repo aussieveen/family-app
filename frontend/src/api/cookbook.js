@@ -23,3 +23,12 @@ export async function toggleFavourite(id) {
   const res = await fetch(`${BASE}/api/v1/recipes/${id}/favourite`, { method: 'PATCH' })
   return res.json()
 }
+
+export async function getShoppingList(recipeIds) {
+  const res = await fetch(`${BASE}/api/v1/shopping-list`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ recipeIds }),
+  })
+  return res.json()
+}

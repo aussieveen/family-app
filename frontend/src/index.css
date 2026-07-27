@@ -17,4 +17,9 @@
   --color-meal-border: #F7CD8E;
   --color-today-bg: #EAF6FB;
   --color-today-accent: #7FC3E3;
+  --color-utility-accent: #3E9C8C;
+  --color-utility-bg: #E9F6F2;
+  --color-utility-border: #BEE3D9;
+  --color-favorite-accent: #E0714F;
+  --color-favorite-muted: #C9CCC2;
 }

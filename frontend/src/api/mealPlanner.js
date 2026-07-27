@@ -6,8 +6,8 @@ export async function getPlan(weekStartDate) {
   return res.json()
 }
 
-export async function getCurrentPlan() {
-  const res = await fetch(`${BASE}/api/v1/plan/current`)
+export async function getRecipeIdsFrom(fromDate) {
+  const res = await fetch(`${BASE}/api/v1/plan/recipe-ids?from=${fromDate}`)
   return res.json()
 }
 

@@ -121,7 +121,7 @@ export default function MealPlanScreen() {
         </div>
       )}
 
-      {shoppingOpen && <ShoppingListModal weekStartDate={from} onClose={() => setShoppingOpen(false)} />}
+      {shoppingOpen && <ShoppingListModal fromDate={format(new Date(), 'yyyy-MM-dd')} onClose={() => setShoppingOpen(false)} />}
     </div>
   )
 }

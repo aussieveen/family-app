@@ -4,12 +4,14 @@ import { getEvents } from '../../api/familyApp'
 import { getPlan } from '../../api/mealPlanner'
 import DayColumn from './DayColumn'
 import EventModal from './EventModal'
+import ShoppingListModal from '../meal-planning/ShoppingListModal'
 
 export default function WeekCalendar({ members }) {
   const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date(), { weekStartsOn: 1 }))
   const [events, setEvents] = useState([])
   const [plan, setPlan] = useState(null)
   const [modal, setModal] = useState(null) // { event } | { date } | null
+  const [shoppingOpen, setShoppingOpen] = useState(false)
 
   const todayWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 })
   const isCurrentWeek = weekStart.getTime() === todayWeekStart.getTime()
@@ -43,27 +45,34 @@ export default function WeekCalendar({ members }) {
   return (
     <div className="flex flex-col h-full">
       {/* Week nav */}
-      <div className="flex items-center justify-between px-[18px] py-4 bg-header-bg border-b border-line">
+      <div className="flex items-center gap-3 px-[18px] py-4 bg-header-bg border-b border-line">
         <button
           onClick={() => setWeekStart(w => subWeeks(w, 1))}
-          className="flex items-center gap-1.5 bg-white/70 rounded-[10px] px-[14px] py-[10px] text-[14px] font-bold text-ink min-h-[40px] border-0 cursor-pointer"
+          className="flex items-center gap-1.5 bg-white/70 rounded-[10px] px-[14px] py-[10px] text-[14px] font-bold text-ink min-h-[40px] border-0 cursor-pointer flex-shrink-0"
         >
           ← Prev
         </button>
-        <span className="text-[15px] font-extrabold tracking-[0.01em] text-ink">
+        <span className="flex-1 text-center text-[15px] font-extrabold tracking-[0.01em] text-ink">
           {format(weekStart, 'MMM d')} – {format(days[6], 'MMM d, yyyy')}
         </span>
-        {!isCurrentWeek && (
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <button
+            onClick={() => setShoppingOpen(true)}
+            className="flex items-center gap-[7px] bg-utility-accent text-white rounded-[10px] px-[14px] py-[10px] text-[13.5px] font-bold min-h-[40px] border-0 cursor-pointer hover:brightness-105"
+          >
+            🛒 Shopping List
+          </button>
           <button
             onClick={() => setWeekStart(todayWeekStart)}
-            className="flex items-center gap-1.5 bg-today-accent rounded-[10px] px-[14px] py-[10px] text-[14px] font-bold text-white min-h-[40px] border-0 cursor-pointer"
+            disabled={isCurrentWeek}
+            className={`bg-today-accent text-white rounded-[10px] px-[14px] py-[10px] text-[13.5px] font-bold min-h-[40px] border-0 transition-opacity ${isCurrentWeek ? 'opacity-50 cursor-default' : 'cursor-pointer hover:brightness-105'}`}
           >
             Today
           </button>
-        )}
+        </div>
         <button
           onClick={() => setWeekStart(w => addWeeks(w, 1))}
-          className="flex items-center gap-1.5 bg-white/70 rounded-[10px] px-[14px] py-[10px] text-[14px] font-bold text-ink min-h-[40px] border-0 cursor-pointer"
+          className="flex items-center gap-1.5 bg-white/70 rounded-[10px] px-[14px] py-[10px] text-[14px] font-bold text-ink min-h-[40px] border-0 cursor-pointer flex-shrink-0"
         >
           Next →
         </button>
@@ -112,6 +121,10 @@ export default function WeekCalendar({ members }) {
           onClose={() => setModal(null)}
           onSaved={() => { setModal(null); refresh() }}
         />
+      )}
+
+      {shoppingOpen && (
+        <ShoppingListModal fromDate={format(new Date(), 'yyyy-MM-dd')} onClose={() => setShoppingOpen(false)} />
       )}
     </div>
   )
