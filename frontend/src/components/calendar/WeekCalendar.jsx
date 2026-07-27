@@ -11,6 +11,8 @@ export default function WeekCalendar({ members }) {
   const [plan, setPlan] = useState(null)
   const [modal, setModal] = useState(null) // { event } | { date } | null
 
+  const todayWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 })
+  const isCurrentWeek = weekStart.getTime() === todayWeekStart.getTime()
   const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
   const from = format(weekStart, 'yyyy-MM-dd')
   const to = format(days[6], 'yyyy-MM-dd')
@@ -51,6 +53,14 @@ export default function WeekCalendar({ members }) {
         <span className="text-[15px] font-extrabold tracking-[0.01em] text-ink">
           {format(weekStart, 'MMM d')} – {format(days[6], 'MMM d, yyyy')}
         </span>
+        {!isCurrentWeek && (
+          <button
+            onClick={() => setWeekStart(todayWeekStart)}
+            className="flex items-center gap-1.5 bg-today-accent rounded-[10px] px-[14px] py-[10px] text-[14px] font-bold text-white min-h-[40px] border-0 cursor-pointer"
+          >
+            Today
+          </button>
+        )}
         <button
           onClick={() => setWeekStart(w => addWeeks(w, 1))}
           className="flex items-center gap-1.5 bg-white/70 rounded-[10px] px-[14px] py-[10px] text-[14px] font-bold text-ink min-h-[40px] border-0 cursor-pointer"
