@@ -18,3 +18,8 @@ export async function getSuggestedSides(id) {
   const res = await fetch(`${BASE}/api/v1/recipes/${id}/suggested-sides`)
   return res.json()
 }
+
+export async function toggleFavourite(id) {
+  const res = await fetch(`${BASE}/api/v1/recipes/${id}/favourite`, { method: 'PATCH' })
+  return res.json()
+}

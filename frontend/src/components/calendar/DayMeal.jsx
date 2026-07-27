@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getRecipe, getRecipes, getSuggestedSides } from '../../api/cookbook'
+import { getRecipe, getRecipes, getSuggestedSides, toggleFavourite } from '../../api/cookbook'
 import { assignMeal, clearMeal } from '../../api/mealPlanner'
 
 // Shared close button used in modals
@@ -32,6 +32,9 @@ function RecipeCard({ r, onClick, selected }) {
     >
       {selected && (
         <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-meal-accent flex items-center justify-center text-white text-[13px]">✓</div>
+      )}
+      {r.favourite && (
+        <div className="absolute top-2 left-2 text-[14px] leading-none" style={{ color: '#E05C4A' }}>♥</div>
       )}
       {r.image
         ? <img src={r.image} alt={r.name} className="w-full h-[92px] object-cover block" />
@@ -135,6 +138,11 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
     onMealUpdated()
   }
 
+  async function handleToggleFavourite(recipeId) {
+    const { favourite } = await toggleFavourite(recipeId)
+    setRecipeDetails(prev => ({ ...prev, [recipeId]: { ...prev[recipeId], favourite } }))
+  }
+
   async function handleRemoveMain() {
     const sides = meal?.sides ?? []
     if (sides.length > 0) {
@@ -156,6 +164,18 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
     setExpandedIds(new Set())
     setRecipeDetails({})
   }
+
+  // Preload recipe details when the modal opens so favourite state is immediately available
+  useEffect(() => {
+    if (!viewingAll) return
+    allRecipes.forEach(({ recipeId }) => {
+      if (!recipeDetails[recipeId]) {
+        getRecipe(recipeId).then(d => setRecipeDetails(prev => ({ ...prev, [recipeId]: d })))
+      }
+    })
+  // ponytail: allRecipes and recipeDetails omitted — this runs once on open, stale closure is intentional
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewingAll])
 
   const mainItem = meal?.main ? { ...meal.main, isMain: true } : null
   const sideItems = (meal?.sides ?? []).map(s => ({ ...s, isMain: false }))
@@ -226,14 +246,14 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
                   {mainItem && (
                     <>
                       <Eyebrow className="mt-0">Main</Eyebrow>
-                      <ItemCard r={mainItem} expanded={expandedIds.has(mainItem.recipeId)} onToggle={() => toggleExpanded(mainItem.recipeId)} onRemove={handleRemoveMain} details={recipeDetails[mainItem.recipeId]} />
+                      <ItemCard r={mainItem} expanded={expandedIds.has(mainItem.recipeId)} onToggle={() => toggleExpanded(mainItem.recipeId)} onRemove={handleRemoveMain} details={recipeDetails[mainItem.recipeId]} onToggleFavourite={handleToggleFavourite} />
                     </>
                   )}
                   {sideItems.length > 0 && (
                     <>
                       <Eyebrow>Sides</Eyebrow>
                       {sideItems.map(r => (
-                        <ItemCard key={r.recipeId} r={r} expanded={expandedIds.has(r.recipeId)} onToggle={() => toggleExpanded(r.recipeId)} onRemove={() => handleRemoveSide(r.recipeId)} details={recipeDetails[r.recipeId]} />
+                        <ItemCard key={r.recipeId} r={r} expanded={expandedIds.has(r.recipeId)} onToggle={() => toggleExpanded(r.recipeId)} onRemove={() => handleRemoveSide(r.recipeId)} details={recipeDetails[r.recipeId]} onToggleFavourite={handleToggleFavourite} />
                       ))}
                     </>
                   )}
@@ -373,7 +393,8 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
 }
 
 // Expandable item card for the meal detail modal
-function ItemCard({ r, expanded, onToggle, onRemove, details }) {
+function ItemCard({ r, expanded, onToggle, onRemove, details, onToggleFavourite }) {
+  const isFavourite = details?.favourite ?? null
   return (
     <div className={`rounded-[14px] overflow-hidden border ${r.isMain ? 'border-meal-border bg-meal-bg' : 'border-line bg-card-bg'}`}>
       <div className="flex items-center gap-2.5 p-[10px_8px_10px_10px] cursor-pointer" onClick={onToggle}>
@@ -388,6 +409,14 @@ function ItemCard({ r, expanded, onToggle, onRemove, details }) {
           <div className="text-[14.5px] font-bold text-ink truncate">{r.name}</div>
         </div>
         <div className="flex items-center gap-0.5 flex-shrink-0">
+          <button
+            className="w-9 h-9 rounded-[10px] flex items-center justify-center text-[19px] border-0 bg-transparent cursor-pointer"
+            style={{ color: isFavourite ? '#E05C4A' : '#97A08A', opacity: isFavourite === null ? 0.3 : 1 }}
+            onClick={e => { e.stopPropagation(); onToggleFavourite(r.recipeId) }}
+            title={isFavourite ? 'Remove from favourites' : 'Add to favourites'}
+          >
+            {isFavourite ? '♥' : '♡'}
+          </button>
           <button
             className={`w-9 h-9 rounded-[10px] flex items-center justify-center text-[15px] text-ink-soft border-0 bg-transparent cursor-pointer transition-transform ${expanded ? 'rotate-180' : ''}`}
             onClick={e => { e.stopPropagation(); onToggle() }}

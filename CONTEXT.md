@@ -33,3 +33,7 @@ _Avoid_: Weekly plan, menu
 **Shopping List**:
 The aggregated list of ingredients derived from the current Meal Plan. Produced by the meal-planner service.
 _Avoid_: Grocery list, ingredient list
+
+**Favourite**:
+A recipe the family wants to eat often. A boolean flag on a Recipe; distinct from Mastered (which signals cooking proficiency). Set via the cookbook admin or the meal plan detail view. The AI meal planner will use it to balance desired repetition against variety.
+_Avoid_: Starred, liked, preferred
