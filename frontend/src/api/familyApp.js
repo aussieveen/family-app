@@ -40,3 +40,43 @@ export async function updateEvent(id, data) {
 export async function deleteEvent(id) {
   await fetch(`${BASE}/api/v1/events/${id}`, { method: 'DELETE' })
 }
+
+export async function getStaples() {
+  const res = await fetch(`${BASE}/api/v1/staples`)
+  return res.json()
+}
+
+export async function createStaple(data) {
+  const res = await fetch(`${BASE}/api/v1/staples`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  return res.json()
+}
+
+export async function deleteStaple(id) {
+  await fetch(`${BASE}/api/v1/staples/${id}`, { method: 'DELETE' })
+}
+
+export async function getCustomShoppingItems() {
+  const res = await fetch(`${BASE}/api/v1/custom-shopping-items`)
+  return res.json()
+}
+
+export async function addCustomShoppingItem(data) {
+  const res = await fetch(`${BASE}/api/v1/custom-shopping-items`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  return res.json()
+}
+
+export async function removeCustomShoppingItem(id) {
+  await fetch(`${BASE}/api/v1/custom-shopping-items/${id}`, { method: 'DELETE' })
+}
+
+export async function clearCustomShoppingItems() {
+  await fetch(`${BASE}/api/v1/custom-shopping-items`, { method: 'DELETE' })
+}

@@ -23,3 +23,7 @@ export async function assignMeal(weekStartDate, day, mainRecipeId, sideRecipeIds
 export async function clearMeal(weekStartDate, day) {
   await fetch(`${BASE}/api/v1/plan/${weekStartDate}/${day}`, { method: 'DELETE' })
 }
+
+export async function markShopped(fromDate) {
+  await fetch(`${BASE}/api/v1/plan/shopped?from=${fromDate}`, { method: 'PATCH' })
+}

@@ -32,3 +32,17 @@ export async function getShoppingList(recipeIds) {
   })
   return res.json()
 }
+
+export async function getCategories() {
+  const res = await fetch(`${BASE}/api/v1/ingredient-names/categories`)
+  return res.json()
+}
+
+export async function updateIngredientCategory(id, category) {
+  const res = await fetch(`${BASE}/api/v1/ingredient-names/${id}/category`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ category }),
+  })
+  return res.json()
+}
