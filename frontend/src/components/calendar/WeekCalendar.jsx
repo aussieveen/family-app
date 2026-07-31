@@ -96,7 +96,7 @@ export default function WeekCalendar({ members }) {
       )}
 
       {/* Day rows */}
-      <div className="flex flex-col flex-1 overflow-hidden">
+      <div className="flex flex-col flex-1 overflow-y-auto bg-page-bg gap-[10px] p-[12px]">
         {days.map(day => (
           <DayColumn
             key={day.toISOString()}

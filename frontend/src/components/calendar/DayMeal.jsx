@@ -187,7 +187,7 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
       {/* Meal column inline panel */}
       <button
         onClick={() => setViewingAll(true)}
-        className="bg-meal-bg h-full w-full overflow-y-auto text-left flex flex-col gap-2 p-[10px_14px] justify-center hover:brightness-[0.97] transition-all cursor-pointer border-0"
+        className="bg-meal-bg h-full w-full overflow-y-auto text-left flex flex-col gap-2 p-[10px_14px] justify-start hover:brightness-[0.97] transition-all cursor-pointer border-0"
       >
         {allRecipes.length === 0 ? (
           <div className="flex items-center justify-center gap-1.5 py-3 rounded-xl text-[12.5px] font-extrabold text-meal-accent"
@@ -258,7 +258,7 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
                     </>
                   )}
                   <button
-                    onClick={() => setOpen(true)}
+                    onClick={() => { setSelectedMainId(meal.main.recipeId); setStep('sides'); setOpen(true) }}
                     className="flex items-center justify-center gap-1.5 rounded-xl py-3 text-[13px] font-bold text-meal-accent mt-0.5 border-0 bg-transparent cursor-pointer"
                     style={{ border: '1.5px dashed var(--color-meal-border)' }}
                   >
