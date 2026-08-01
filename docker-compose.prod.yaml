@@ -1,0 +1,22 @@
+version: '3.7'
+
+services:
+  backend:
+    image: ghcr.io/aussieveen/family-app-backend:latest
+    environment:
+      APP_ENV: prod
+      DATABASE_URL: ${DATABASE_URL}
+      APP_SECRET: ${APP_SECRET}
+    ports:
+      - '${BACKEND_PORT:-10003}:80'
+    restart: unless-stopped
+
+  frontend:
+    image: ghcr.io/aussieveen/family-app-frontend:latest
+    environment:
+      FAMILY_API_URL: ${FAMILY_API_URL:-http://192.168.1.x:10003}
+      MEAL_API_URL: ${MEAL_API_URL:-http://192.168.1.x:10001}
+      COOKBOOK_API_URL: ${COOKBOOK_API_URL:-http://192.168.1.x:10000}
+    ports:
+      - '${FRONTEND_PORT:-3000}:80'
+    restart: unless-stopped
