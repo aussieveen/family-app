@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@theme {
+  /* Sunshine Meadow — Pastel + Strong Meal */
+  --color-page-bg: #FDFBF3;
+  --color-card-bg: #FFFEFB;
+  --color-header-bg: #F5FAEC;
+  --color-ink: #3A4235;
+  --color-ink-soft: #97A08A;
+  --color-line: rgba(0, 0, 0, 0.08);
+  --color-event-bg: #EEF8EC;
+  --color-event-border: #CFE9C9;
+  --color-event-text: #6BA178;
+  --color-event-accent: #4F8F5E;
+  --color-meal-accent: #F0982A;
+  --color-meal-bg: #FDEDD6;
+  --color-meal-border: #F7CD8E;
+  --color-today-bg: #EAF6FB;
+  --color-today-accent: #7FC3E3;
+  --color-utility-accent: #3E9C8C;
+  --color-utility-bg: #E9F6F2;
+  --color-utility-border: #BEE3D9;
+  --color-favorite-accent: #E0714F;
+  --color-favorite-muted: #C9CCC2;
+}
