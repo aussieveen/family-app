@@ -57,6 +57,30 @@ class CustomShoppingItemController extends AbstractController
         return $this->json($this->format($item), Response::HTTP_CREATED);
     }
 
+    #[Route('/{id}', name: 'api_custom_shopping_items_update', methods: ['PATCH'])]
+    #[OA\Patch(summary: 'Update a custom shopping item')]
+    #[OA\Parameter(name: 'id', in: 'path', schema: new OA\Schema(type: 'integer'))]
+    #[OA\Response(response: 200, description: 'Updated')]
+    #[OA\Response(response: 404, description: 'Not found')]
+    public function update(int $id, Request $request): JsonResponse
+    {
+        $item = $this->repository->find($id);
+
+        if ($item === null) {
+            return $this->json(['error' => 'Item not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $body = json_decode($request->getContent(), true) ?? [];
+
+        if (array_key_exists('name', $body)) $item->setName(trim($body['name']));
+        if (array_key_exists('quantity', $body)) $item->setQuantity($body['quantity'] ?: null);
+        if (array_key_exists('category', $body)) $item->setCategory($body['category'] ?: null);
+
+        $this->em->flush();
+
+        return $this->json($this->format($item));
+    }
+
     #[Route('/{id}', name: 'api_custom_shopping_items_delete', methods: ['DELETE'])]
     #[OA\Delete(summary: 'Remove a custom shopping item')]
     #[OA\Parameter(name: 'id', in: 'path', schema: new OA\Schema(type: 'integer'))]

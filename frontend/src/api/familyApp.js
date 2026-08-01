@@ -73,6 +73,15 @@ export async function addCustomShoppingItem(data) {
   return res.json()
 }
 
+export async function updateCustomShoppingItem(id, data) {
+  const res = await fetch(`${BASE}/api/v1/custom-shopping-items/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  return res.json()
+}
+
 export async function removeCustomShoppingItem(id) {
   await fetch(`${BASE}/api/v1/custom-shopping-items/${id}`, { method: 'DELETE' })
 }

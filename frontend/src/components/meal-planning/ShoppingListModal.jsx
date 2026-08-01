@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { getRecipeIdsFrom, markShopped } from '../../api/mealPlanner'
 import { getShoppingList, getCategories, updateIngredientCategory } from '../../api/cookbook'
-import { getStaples, createStaple, deleteStaple, getCustomShoppingItems, addCustomShoppingItem, removeCustomShoppingItem, clearCustomShoppingItems } from '../../api/familyApp'
+import { getStaples, createStaple, deleteStaple, getCustomShoppingItems, addCustomShoppingItem, updateCustomShoppingItem, removeCustomShoppingItem, clearCustomShoppingItems } from '../../api/familyApp'
 
 function groupItems(items) {
   const uncategorised = []
@@ -151,10 +151,20 @@ export default function ShoppingListModal({ fromDate, onClose }) {
       getRecipeIdsFrom(fromDate).then(({ recipeIds }) => recipeIds?.length ? getShoppingList(recipeIds) : []),
       getCustomShoppingItems(),
     ]).then(([mealItems, customItems]) => {
-      const custom = (Array.isArray(customItems) ? customItems : []).map(c => ({
-        name: c.name, display: c.quantity || '', category: c.category, custom: true, customId: c.id,
-      }))
-      setItems([...mealItems, ...custom])
+      const customByName = Object.fromEntries(
+        (Array.isArray(customItems) ? customItems : []).map(c => [c.name.toLowerCase(), c])
+      )
+      const merged = (Array.isArray(mealItems) ? mealItems : []).map(it => {
+        const override = customByName[it.name.toLowerCase()]
+        return override
+          ? { ...it, display: override.quantity || it.display, customId: override.id }
+          : it
+      })
+      const matchedNames = new Set(merged.filter(it => it.customId).map(it => it.name.toLowerCase()))
+      const standalone = (Array.isArray(customItems) ? customItems : [])
+        .filter(c => !matchedNames.has(c.name.toLowerCase()))
+        .map(c => ({ name: c.name, display: c.quantity || '', category: c.category, custom: true, customId: c.id }))
+      setItems([...merged, ...standalone])
     })
     getCategories().then(cats => setCategories(Array.isArray(cats) ? cats : cats?.data ?? []))
     getStaples().then(s => setStaples(Array.isArray(s) ? s : []))
@@ -168,8 +178,16 @@ export default function ShoppingListModal({ fromDate, onClose }) {
     })
   }
 
-  function updateQty(name, qty) {
+  async function updateQty(name, qty) {
     setItems(prev => prev.map(it => it.name === name ? { ...it, display: qty } : it))
+    const item = items.find(it => it.name === name)
+    if (!item) return
+    if (item.customId) {
+      updateCustomShoppingItem(item.customId, { quantity: qty || null })
+    } else {
+      const saved = await addCustomShoppingItem({ name, quantity: qty || null, category: item.category })
+      setItems(prev => prev.map(it => it.name === name ? { ...it, customId: saved.id } : it))
+    }
   }
 
   function assignCategory(item, category) {

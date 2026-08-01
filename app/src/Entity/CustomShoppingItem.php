@@ -37,6 +37,7 @@ class CustomShoppingItem
     public function getId(): ?int { return $this->id; }
 
     public function getName(): string { return $this->name; }
+    public function setName(string $name): static { $this->name = $name; return $this; }
     public function getCategory(): ?string { return $this->category; }
     public function setCategory(?string $category): static { $this->category = $category; return $this; }
     public function getQuantity(): ?string { return $this->quantity; }
