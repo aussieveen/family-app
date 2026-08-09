@@ -8,8 +8,8 @@ export default function App() {
   useEffect(() => { getMembers().then(setMembers) }, [])
 
   return (
-    <div className="flex flex-col h-screen bg-page-bg overflow-hidden">
-      <main className="flex-1 overflow-hidden">
+    <div className="flex flex-col h-full bg-page-bg overflow-hidden">
+      <main className="flex-1 min-h-0 overflow-hidden">
         <WeekCalendar members={members} />
       </main>
     </div>

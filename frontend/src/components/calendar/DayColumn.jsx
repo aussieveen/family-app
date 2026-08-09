@@ -7,7 +7,7 @@ export default function DayColumn({ day, events, meal, weekStartDate, today, onA
 
   return (
     <div
-      className={`grid min-h-[128px] relative rounded-[16px] overflow-hidden ${today ? 'bg-today-bg' : 'bg-card-bg'}`}
+      className={`grid h-full min-h-[128px] relative rounded-[16px] overflow-hidden ${today ? 'bg-today-bg' : 'bg-card-bg'}`}
       style={{
         gridTemplateColumns: '74px 1.3fr 0.85fr',
         boxShadow: today
