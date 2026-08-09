@@ -96,19 +96,20 @@ export default function WeekCalendar({ members }) {
       )}
 
       {/* Day rows */}
-      <div className="flex flex-col flex-1 overflow-y-auto bg-page-bg gap-[10px] p-[12px]">
+      <div className="flex flex-col flex-1 min-h-0 overflow-y-auto bg-page-bg gap-[10px] p-[12px]">
         {days.map(day => (
-          <DayColumn
-            key={day.toISOString()}
-            day={day}
-            events={eventsForDay(day)}
-            meal={mealForDay(day)}
-            weekStartDate={from}
-            today={isToday(day)}
-            onAddEvent={() => setModal({ date: format(day, 'yyyy-MM-dd') })}
-            onSelectEvent={event => setModal({ event })}
-            onMealUpdated={refreshPlan}
-          />
+          <div key={day.toISOString()} className="flex-1 min-h-[128px]">
+            <DayColumn
+              day={day}
+              events={eventsForDay(day)}
+              meal={mealForDay(day)}
+              weekStartDate={from}
+              today={isToday(day)}
+              onAddEvent={() => setModal({ date: format(day, 'yyyy-MM-dd') })}
+              onSelectEvent={event => setModal({ event })}
+              onMealUpdated={refreshPlan}
+            />
+          </div>
         ))}
       </div>
 
