@@ -294,7 +294,7 @@ export default function ShoppingListModal({ fromDate, onClose }) {
         </div>
 
         {/* Body */}
-        <div ref={bodyRef} className="flex-1 overflow-y-auto px-5 pb-4">
+        <div ref={bodyRef} className="flex-1 min-h-0 overflow-y-auto px-5 pb-4" style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}>
           {items === null && (
             <p className="text-center text-ink-soft py-10 text-[14px]">Loading…</p>
           )}
