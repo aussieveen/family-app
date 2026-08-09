@@ -9,7 +9,7 @@ export default function DayColumn({ day, events, meal, weekStartDate, today, onA
     <div
       className={`grid min-h-[128px] relative rounded-[16px] overflow-hidden ${today ? 'bg-today-bg' : 'bg-card-bg'}`}
       style={{
-        gridTemplateColumns: '74px 1fr 156px',
+        gridTemplateColumns: '74px 1.3fr 0.85fr',
         boxShadow: today
           ? '0 2px 4px rgba(0,0,0,0.05), 0 6px 16px rgba(20,20,20,0.08)'
           : '0 1px 2px rgba(0,0,0,0.04), 0 3px 10px rgba(20,20,20,0.05)',
@@ -28,27 +28,27 @@ export default function DayColumn({ day, events, meal, weekStartDate, today, onA
         </span>
       </div>
 
-      {/* Events */}
-      <div className="flex flex-col gap-2 p-[10px_12px] overflow-y-auto border-r border-line">
-        {events.map(event => (
-          <EventCard key={`${event.id}-${event.occurrenceDate}`} event={event} onClick={() => onSelectEvent(event)} />
-        ))}
-        <button
-          onClick={onAddEvent}
-          className="self-start flex items-center gap-1.5 text-[13px] font-bold text-ink-soft min-h-[40px] px-3 py-2 rounded-xl cursor-pointer border-0 bg-transparent"
-          style={{ border: '1.5px dashed rgba(0,0,0,0.15)' }}
-        >
-          + Add event
-        </button>
-      </div>
-
-      {/* Meal */}
+      {/* Meal — primary column */}
       <DayMeal
         meal={meal}
         weekStartDate={weekStartDate}
         dayName={dayName}
         onMealUpdated={onMealUpdated}
       />
+
+      {/* Events — secondary right column */}
+      <div className="flex flex-col gap-2 p-[10px_12px] overflow-y-auto border-l border-line">
+        {events.map(event => (
+          <EventCard key={`${event.id}-${event.occurrenceDate}`} event={event} onClick={() => onSelectEvent(event)} />
+        ))}
+        <button
+          onClick={onAddEvent}
+          className={`flex items-center justify-center gap-1.5 text-[13px] font-bold text-ink-soft px-3 py-2 rounded-xl cursor-pointer border-0 bg-transparent ${events.length === 0 ? 'flex-1' : 'self-start min-h-[40px]'}`}
+          style={{ border: '1.5px dashed rgba(0,0,0,0.15)' }}
+        >
+          + Add event
+        </button>
+      </div>
     </div>
   )
 }
