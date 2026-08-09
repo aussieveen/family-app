@@ -89,12 +89,12 @@ export default function EventModal({ event, defaultDate, members, onClose, onSav
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center bg-black/30" onClick={onClose}>
       <div
-        className="bg-card-bg w-full max-w-[460px] rounded-t-[22px] sm:rounded-[22px] flex flex-col overflow-hidden"
-        style={{ boxShadow: '0 -8px 30px rgba(0,0,0,0.15)', maxHeight: 'min(88dvh, 88vh)' }}
+        className="bg-card-bg w-full max-w-[460px] rounded-t-[22px] sm:rounded-[22px] overflow-hidden"
+        style={{ boxShadow: '0 -8px 30px rgba(0,0,0,0.15)' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center px-[10px] py-[18px] pb-[14px] bg-header-bg border-b border-line flex-shrink-0 gap-1">
+        <div className="flex items-center px-[10px] py-[18px] pb-[14px] bg-header-bg border-b border-line gap-1">
           <button
             onClick={onClose}
             className="w-10 h-10 rounded-full flex items-center justify-center text-[17px] text-ink flex-shrink-0 cursor-pointer border-0"
@@ -108,7 +108,7 @@ export default function EventModal({ event, defaultDate, members, onClose, onSav
         </div>
 
         {/* Body */}
-        <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 flex flex-col gap-4" style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}>
+        <div className="overflow-y-auto px-5 py-4 flex flex-col gap-4" style={{ maxHeight: 'calc(88dvh - 150px)', WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}>
           {/* Title */}
           <div>
             <FieldLabel>Title</FieldLabel>
@@ -247,7 +247,7 @@ export default function EventModal({ event, defaultDate, members, onClose, onSav
         </div>
 
         {/* Footer: [Delete fixed] [Cancel flex:1] [Save flex:1] */}
-        <div className="flex items-center gap-2.5 px-5 pb-5 pt-4 border-t border-line flex-shrink-0">
+        <div className="flex items-center gap-2.5 px-5 pb-5 pt-4 border-t border-line">
           {!isNew && (
             <button
               onClick={handleDelete}

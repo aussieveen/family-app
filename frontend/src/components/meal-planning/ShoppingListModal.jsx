@@ -247,12 +247,12 @@ export default function ShoppingListModal({ fromDate, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center bg-black/30" onClick={onClose}>
       <div
-        className="bg-card-bg w-full max-w-[460px] rounded-t-[22px] sm:rounded-[22px] flex flex-col overflow-hidden"
-        style={{ boxShadow: '0 -8px 30px rgba(0,0,0,0.15)', maxHeight: 'min(88dvh, 88vh)' }}
+        className="bg-card-bg w-full max-w-[460px] rounded-t-[22px] sm:rounded-[22px] overflow-hidden"
+        style={{ boxShadow: '0 -8px 30px rgba(0,0,0,0.15)' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-[18px] pb-[14px] bg-utility-bg border-b border-utility-border flex-shrink-0">
+        <div className="flex items-center justify-between px-5 py-[18px] pb-[14px] bg-utility-bg border-b border-utility-border">
           <span className="text-[17px] font-extrabold text-ink">🛒 Shopping List</span>
           <div className="flex items-center gap-2">
             {!shopDone && !shopDoneConfirm && !!items?.length && (
