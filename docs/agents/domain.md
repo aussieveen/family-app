@@ -49,3 +49,14 @@ If the concept you need isn't in the glossary yet, that's a signal — either yo
 If your output contradicts an existing ADR, surface it explicitly rather than silently overriding:
 
 > _Contradicts ADR-0007 (event-sourced orders) — but worth reopening because…_
+
+---
+
+<details>
+<summary>Source Map</summary>
+
+- [AGENTS.md](../../AGENTS.md)
+
+</details>
+
+[← Documentation home](../README.md)
