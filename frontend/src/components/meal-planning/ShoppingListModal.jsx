@@ -20,7 +20,7 @@ function groupItems(items) {
 function Checkbox({ checked }) {
   return (
     <div
-      className="w-[22px] h-[22px] rounded-[7px] flex items-center justify-center text-[13px] flex-shrink-0 transition-colors"
+      className="w-[22px] h-[22px] rounded-[7px] flex items-center justify-center text-[17px] flex-shrink-0 transition-colors"
       style={checked
         ? { background: 'var(--color-utility-accent)', border: '1.5px solid var(--color-utility-accent)', color: '#fff' }
         : { background: 'var(--color-card-bg)', border: '1.5px solid var(--color-line)', color: 'transparent' }
@@ -54,7 +54,7 @@ function QtySpan({ value, onChange }) {
         onBlur={commit}
         onKeyDown={e => { if (e.key === 'Enter') e.currentTarget.blur() }}
         onClick={e => e.stopPropagation()}
-        className="text-[13px] font-bold text-ink-soft text-right w-14 px-1 rounded border outline-none"
+        className="text-[17px] font-bold text-ink-soft text-right w-14 px-1 rounded border outline-none"
         style={{ borderColor: 'var(--color-utility-accent)' }}
       />
     )
@@ -65,7 +65,7 @@ function QtySpan({ value, onChange }) {
   return (
     <span
       onClick={open}
-      className="text-[13px] font-bold text-ink-soft cursor-text px-1 rounded border border-dashed border-transparent hover:border-line hover:bg-utility-bg"
+      className="text-[17px] font-bold text-ink-soft cursor-text px-1 rounded border border-dashed border-transparent hover:border-line hover:bg-utility-bg"
     >{value}</span>
   )
 }
@@ -78,14 +78,14 @@ function ItemRow({ item, isChecked, onToggle, onQtyChange, onRemove, isLast }) {
       className={`flex items-center gap-3 py-[10px] cursor-pointer ${!isLast ? 'border-b border-line' : ''}`}
     >
       <Checkbox checked={isChecked} />
-      <span className={`flex-1 text-[14px] font-semibold transition-colors ${isChecked ? 'line-through text-ink-soft' : 'text-ink'}`}>
+      <span className={`flex-1 text-[18px] font-semibold transition-colors ${isChecked ? 'line-through text-ink-soft' : 'text-ink'}`}>
         {item.name}
       </span>
       <QtySpan value={item.display || ''} onChange={onQtyChange} />
       {onRemove && (
         <button
           onClick={e => { e.stopPropagation(); onRemove() }}
-          className="text-[13px] text-ink-soft hover:text-favorite-accent cursor-pointer border-0 bg-transparent ml-1"
+          className="text-[17px] text-ink-soft hover:text-favorite-accent cursor-pointer border-0 bg-transparent ml-1"
         >✕</button>
       )}
     </div>
@@ -97,19 +97,19 @@ function UncategorisedRow({ item, isChecked, onToggle, onQtyChange, onRemove, ca
     <div className={!isLast ? 'border-b border-line' : ''}>
       <div data-item-name={item.name} onClick={onToggle} className="flex items-center gap-3 py-[10px] cursor-pointer">
         <Checkbox checked={isChecked} />
-        <span className={`flex-1 text-[14px] font-semibold transition-colors ${isChecked ? 'line-through text-ink-soft' : 'text-ink'}`}>
+        <span className={`flex-1 text-[18px] font-semibold transition-colors ${isChecked ? 'line-through text-ink-soft' : 'text-ink'}`}>
           {item.name}
         </span>
         <QtySpan value={item.display || ''} onChange={onQtyChange} />
         <button
           onClick={e => { e.stopPropagation(); onExpandPicker() }}
-          className="text-[11px] font-bold px-2 py-1 rounded-full cursor-pointer border-0 ml-1 flex-shrink-0"
+          className="text-[14.5px] font-bold px-2 py-1 rounded-full cursor-pointer border-0 ml-1 flex-shrink-0"
           style={{ color: 'var(--color-favorite-accent)', background: 'color-mix(in srgb, var(--color-favorite-accent) 12%, transparent)' }}
         >+ Category</button>
         {onRemove && (
           <button
             onClick={e => { e.stopPropagation(); onRemove() }}
-            className="text-[13px] text-ink-soft hover:text-favorite-accent cursor-pointer border-0 bg-transparent"
+            className="text-[17px] text-ink-soft hover:text-favorite-accent cursor-pointer border-0 bg-transparent"
           >✕</button>
         )}
       </div>
@@ -119,7 +119,7 @@ function UncategorisedRow({ item, isChecked, onToggle, onQtyChange, onRemove, ca
             <button
               key={cat.value}
               onClick={e => { e.stopPropagation(); onAssignCategory(cat.value) }}
-              className="text-[12px] font-semibold px-3 py-1 rounded-full cursor-pointer border transition-colors hover:bg-utility-bg"
+              className="text-[15.5px] font-semibold px-3 py-1 rounded-full cursor-pointer border transition-colors hover:bg-utility-bg"
               style={{ borderColor: 'var(--color-utility-border)', color: 'var(--color-utility-accent)' }}
             >{cat.label}</button>
           ))}
@@ -247,24 +247,24 @@ export default function ShoppingListModal({ fromDate, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center bg-black/30" onClick={onClose}>
       <div
-        className="bg-card-bg w-full max-w-[460px] rounded-t-[22px] sm:rounded-[22px] overflow-hidden"
+        className="bg-card-bg w-full sm:w-[80vw] sm:max-w-[80vw] sm:max-h-[80vh] rounded-t-[22px] sm:rounded-[22px] overflow-hidden flex flex-col"
         style={{ boxShadow: '0 -8px 30px rgba(0,0,0,0.15)' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-[18px] pb-[14px] bg-utility-bg border-b border-utility-border">
-          <span className="text-[17px] font-extrabold text-ink">🛒 Shopping List</span>
+          <span className="text-[22px] font-extrabold text-ink">🛒 Shopping List</span>
           <div className="flex items-center gap-2">
             {!shopDone && !shopDoneConfirm && !!items?.length && (
               <button
                 onClick={() => setShopDoneConfirm(true)}
-                className="text-[13px] font-bold px-3 py-1.5 rounded-full cursor-pointer border-0 flex-shrink-0"
+                className="text-[17px] font-bold px-3 py-1.5 rounded-full cursor-pointer border-0 flex-shrink-0"
                 style={{ background: 'color-mix(in srgb, var(--color-utility-accent) 15%, transparent)', color: 'var(--color-utility-accent)' }}
               >✓ Done shopping</button>
             )}
             {shopDoneConfirm && (
               <>
-                <span className="text-[12px] text-ink-soft">Mark meals as shopped?</span>
+                <span className="text-[15.5px] text-ink-soft">Mark meals as shopped?</span>
                 <button
                   onClick={async () => {
                     await Promise.all([markShopped(fromDate), clearCustomShoppingItems()])
@@ -273,21 +273,21 @@ export default function ShoppingListModal({ fromDate, onClose }) {
                     setShopDoneConfirm(false)
                     setShopDone(true)
                   }}
-                  className="text-[13px] font-bold px-3 py-1.5 rounded-full cursor-pointer border-0 text-white flex-shrink-0"
+                  className="text-[17px] font-bold px-3 py-1.5 rounded-full cursor-pointer border-0 text-white flex-shrink-0"
                   style={{ background: 'var(--color-utility-accent)' }}
                 >Yes</button>
                 <button
                   onClick={() => setShopDoneConfirm(false)}
-                  className="text-[13px] text-ink-soft px-2 py-1 cursor-pointer border-0 bg-transparent"
+                  className="text-[17px] text-ink-soft px-2 py-1 cursor-pointer border-0 bg-transparent"
                 >No</button>
               </>
             )}
             {shopDone && (
-              <span className="text-[13px] font-bold" style={{ color: 'var(--color-utility-accent)' }}>✓ Shopped!</span>
+              <span className="text-[17px] font-bold" style={{ color: 'var(--color-utility-accent)' }}>✓ Shopped!</span>
             )}
             <button
               onClick={onClose}
-              className="w-10 h-10 rounded-full flex items-center justify-center text-[17px] text-ink flex-shrink-0 cursor-pointer border-0"
+              className="w-10 h-10 rounded-full flex items-center justify-center text-[22px] text-ink flex-shrink-0 cursor-pointer border-0"
               style={{ background: 'rgba(0,0,0,0.06)' }}
             >✕</button>
           </div>
@@ -296,14 +296,14 @@ export default function ShoppingListModal({ fromDate, onClose }) {
         {/* Body */}
         <div ref={bodyRef} className="flex-1 min-h-0 overflow-y-auto px-5 pb-4" style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}>
           {items === null && (
-            <p className="text-center text-ink-soft py-10 text-[14px]">Loading…</p>
+            <p className="text-center text-ink-soft py-10 text-[18px]">Loading…</p>
           )}
 
           {items !== null && !hasItems && (
             <div className="flex flex-col items-center text-center px-4 py-10 gap-2">
-              <span className="text-[34px]">🍽️</span>
-              <span className="text-[15px] font-extrabold text-ink">No meals planned</span>
-              <span className="text-[13px] text-ink-soft">Add meals to your plan to see ingredients here.</span>
+              <span className="text-[44px]">🍽️</span>
+              <span className="text-[19.5px] font-extrabold text-ink">No meals planned</span>
+              <span className="text-[17px] text-ink-soft">Add meals to your plan to see ingredients here.</span>
             </div>
           )}
 
@@ -312,7 +312,7 @@ export default function ShoppingListModal({ fromDate, onClose }) {
               {/* Uncategorised group — rendered first */}
               {uncategorised.length > 0 && (
                 <div className="mt-4">
-                  <p className="text-[11px] font-extrabold uppercase tracking-wider mb-2" style={{ color: 'var(--color-favorite-accent)' }}>
+                  <p className="text-[14.5px] font-extrabold uppercase tracking-wider mb-2" style={{ color: 'var(--color-favorite-accent)' }}>
                     Uncategorised
                   </p>
                   {uncategorised.map((item, i) => (
@@ -338,7 +338,7 @@ export default function ShoppingListModal({ fromDate, onClose }) {
                 const catLabel = categories.find(c => c.value === cat)?.label ?? cat
                 return (
                 <div key={cat} className="mt-4">
-                  <p className="text-[11px] font-extrabold uppercase tracking-wider text-ink-soft mb-2">{catLabel}</p>
+                  <p className="text-[14.5px] font-extrabold uppercase tracking-wider text-ink-soft mb-2">{catLabel}</p>
                   {catItems.map((item, i) => (
                     <ItemRow
                       key={item.name}
@@ -363,25 +363,25 @@ export default function ShoppingListModal({ fromDate, onClose }) {
                       value={addForm.name}
                       onChange={e => setAddForm(f => ({ ...f, name: e.target.value }))}
                       placeholder="Item name"
-                      className="text-[14px] font-semibold text-ink bg-card-bg border border-line rounded-[8px] px-3 py-2 outline-none focus:border-utility-accent"
+                      className="text-[18px] font-semibold text-ink bg-card-bg border border-line rounded-[8px] px-3 py-2 outline-none focus:border-utility-accent"
                     />
                     <div className="flex gap-2">
                       <input
                         value={addForm.qty}
                         onChange={e => setAddForm(f => ({ ...f, qty: e.target.value }))}
                         placeholder="Qty (e.g. 500g)"
-                        className="text-[13px] text-ink bg-card-bg border border-line rounded-[8px] px-3 py-2 outline-none focus:border-utility-accent flex-1"
+                        className="text-[17px] text-ink bg-card-bg border border-line rounded-[8px] px-3 py-2 outline-none focus:border-utility-accent flex-1"
                       />
                       <select
                         value={addForm.category || ''}
                         onChange={e => setAddForm(f => ({ ...f, category: e.target.value || null }))}
-                        className="text-[13px] text-ink bg-card-bg border border-line rounded-[8px] px-3 py-2 outline-none focus:border-utility-accent flex-1"
+                        className="text-[17px] text-ink bg-card-bg border border-line rounded-[8px] px-3 py-2 outline-none focus:border-utility-accent flex-1"
                       >
                         <option value="">No category</option>
                         {categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
                       </select>
                     </div>
-                    <label className="flex items-center gap-2 text-[13px] text-ink-soft cursor-pointer select-none">
+                    <label className="flex items-center gap-2 text-[17px] text-ink-soft cursor-pointer select-none">
                       <input
                         type="checkbox"
                         checked={addForm.saveAsStaple}
@@ -390,12 +390,12 @@ export default function ShoppingListModal({ fromDate, onClose }) {
                       Save as Staple
                     </label>
                     <div className="flex gap-2 justify-end">
-                      <button type="button" onClick={() => setAddForm(null)} className="text-[13px] text-ink-soft px-3 py-1 cursor-pointer border-0 bg-transparent">
+                      <button type="button" onClick={() => setAddForm(null)} className="text-[17px] text-ink-soft px-3 py-1 cursor-pointer border-0 bg-transparent">
                         Cancel
                       </button>
                       <button
                         type="submit"
-                        className="text-[13px] font-bold text-white px-4 py-1 rounded-[8px] cursor-pointer border-0"
+                        className="text-[17px] font-bold text-white px-4 py-1 rounded-[8px] cursor-pointer border-0"
                         style={{ background: 'var(--color-utility-accent)' }}
                       >Add</button>
                     </div>
@@ -407,7 +407,7 @@ export default function ShoppingListModal({ fromDate, onClose }) {
                       onChange={e => { setAddQuery(e.target.value); scrollAddIntoView() }}
                       onKeyDown={e => { if (e.key === 'Enter' && addQuery.trim()) { setAddForm({ name: addQuery.trim(), qty: '', category: null, saveAsStaple: false }); scrollAddIntoView() } }}
                       placeholder="+ Add item or search staples…"
-                      className="w-full text-[14px] text-ink bg-transparent border border-dashed border-line rounded-[10px] px-4 py-2 outline-none focus:border-utility-accent placeholder:text-ink-soft"
+                      className="w-full text-[18px] text-ink bg-transparent border border-dashed border-line rounded-[10px] px-4 py-2 outline-none focus:border-utility-accent placeholder:text-ink-soft"
                     />
                     {addQuery.trim() && (
                       <div className="mt-1 rounded-[10px] border border-utility-border bg-card-bg overflow-hidden">
@@ -419,27 +419,27 @@ export default function ShoppingListModal({ fromDate, onClose }) {
                             className="flex items-center gap-2 px-4 py-[10px] cursor-pointer hover:bg-utility-bg border-b border-line last:border-0"
                             onClick={() => pickStaple(staple)}
                           >
-                            <span className={`flex-1 text-[14px] font-semibold ${alreadyAdded ? 'text-ink-soft' : 'text-ink'}`}>{staple.name}</span>
+                            <span className={`flex-1 text-[18px] font-semibold ${alreadyAdded ? 'text-ink-soft' : 'text-ink'}`}>{staple.name}</span>
                             {alreadyAdded && (
-                              <span className="text-[11px] font-bold px-2 py-0.5 rounded-full flex-shrink-0" style={{ color: 'var(--color-utility-accent)', background: 'color-mix(in srgb, var(--color-utility-accent) 12%, transparent)' }}>
+                              <span className="text-[14.5px] font-bold px-2 py-0.5 rounded-full flex-shrink-0" style={{ color: 'var(--color-utility-accent)', background: 'color-mix(in srgb, var(--color-utility-accent) 12%, transparent)' }}>
                                 ↑ show
                               </span>
                             )}
-                            {!alreadyAdded && staple.quantity && <span className="text-[12px] text-ink-soft">{staple.quantity}</span>}
+                            {!alreadyAdded && staple.quantity && <span className="text-[15.5px] text-ink-soft">{staple.quantity}</span>}
                             {!alreadyAdded && staple.category && (
-                              <span className="text-[11px] text-ink-soft/60 px-2 py-0.5 rounded-full" style={{ background: 'var(--color-line)' }}>
+                              <span className="text-[14.5px] text-ink-soft/60 px-2 py-0.5 rounded-full" style={{ background: 'var(--color-line)' }}>
                                     {categories.find(c => c.value === staple.category)?.label ?? staple.category}
                               </span>
                             )}
                             <button
                               onClick={e => handleDeleteStaple(e, staple)}
-                              className="text-[12px] text-ink-soft hover:text-favorite-accent cursor-pointer border-0 bg-transparent"
+                              className="text-[15.5px] text-ink-soft hover:text-favorite-accent cursor-pointer border-0 bg-transparent"
                             >✕</button>
                           </div>
                           )
                         })}
                         <div
-                          className="flex items-center gap-2 px-4 py-[10px] cursor-pointer hover:bg-utility-bg text-[14px] font-semibold"
+                          className="flex items-center gap-2 px-4 py-[10px] cursor-pointer hover:bg-utility-bg text-[18px] font-semibold"
                           style={{ color: 'var(--color-utility-accent)' }}
                           onClick={() => {
                             setAddForm({ name: addQuery.trim(), qty: '', category: null, saveAsStaple: false })

@@ -6,11 +6,11 @@ export default function EventCard({ event, onClick }) {
   return (
     <button
       onClick={onClick}
-      className="w-full text-left rounded-xl px-[10px] py-2 bg-event-bg border border-event-border text-[13.5px] cursor-pointer"
+      className="w-full text-left rounded-xl px-[10px] py-2 bg-event-bg border border-event-border text-[17.5px] cursor-pointer"
     >
       <div className="font-extrabold text-ink truncate">{event.title}</div>
       {!event.allDay && (
-        <div className="text-[12px] font-bold text-event-text mt-px">
+        <div className="text-[15.5px] font-bold text-event-text mt-px">
           {format(parseISO(event.startAt), 'HH:mm')}
         </div>
       )}

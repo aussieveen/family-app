@@ -7,7 +7,7 @@ function ModalClose({ onClick }) {
   return (
     <button
       onClick={onClick}
-      className="w-10 h-10 rounded-full flex items-center justify-center text-[17px] text-ink flex-shrink-0 cursor-pointer border-0"
+      className="w-10 h-10 rounded-full flex items-center justify-center text-[22px] text-ink flex-shrink-0 cursor-pointer border-0"
       style={{ background: 'rgba(0,0,0,0.06)' }}
     >
       ✕
@@ -18,7 +18,7 @@ function ModalClose({ onClick }) {
 // Eyebrow section label
 function Eyebrow({ children, className = '' }) {
   return (
-    <div className={`text-[10.5px] font-extrabold tracking-[0.08em] uppercase text-ink-soft mt-2.5 mb-0.5 ${className}`}>
+    <div className={`text-[13.5px] font-extrabold tracking-[0.08em] uppercase text-ink-soft mt-2.5 mb-0.5 ${className}`}>
       {children}
     </div>
   )
@@ -31,16 +31,16 @@ function RecipeCard({ r, onClick, selected }) {
       className={`flex flex-col rounded-[14px] border-2 overflow-hidden text-left cursor-pointer w-full ${selected ? 'border-meal-accent' : 'border-meal-border bg-meal-bg'}`}
     >
       {selected && (
-        <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-meal-accent flex items-center justify-center text-white text-[13px]">✓</div>
+        <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-meal-accent flex items-center justify-center text-white text-[17px]">✓</div>
       )}
       {r.favourite && (
-        <div className="absolute top-2 left-2 text-[14px] leading-none" style={{ color: '#E05C4A' }}>♥</div>
+        <div className="absolute top-2 left-2 text-[18px] leading-none" style={{ color: '#E05C4A' }}>♥</div>
       )}
       {r.image
         ? <img src={r.image} alt={r.name} className="w-full h-[92px] object-cover block" />
         : <div className="w-full h-[92px] bg-meal-bg flex items-center justify-center text-3xl">🍽️</div>
       }
-      <span className="px-[10px] py-[9px] pb-[11px] text-[13px] font-bold text-ink text-center block">{r.name}</span>
+      <span className="px-[10px] py-[9px] pb-[11px] text-[17px] font-bold text-ink text-center block">{r.name}</span>
     </button>
   )
 }
@@ -189,7 +189,7 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
         {allRecipes.length === 0 ? (
           <button
             onClick={() => setOpen(true)}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl text-[13px] font-extrabold text-meal-accent cursor-pointer border-0 bg-transparent"
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl text-[17px] font-extrabold text-meal-accent cursor-pointer border-0 bg-transparent"
             style={{ border: '1.5px dashed var(--color-meal-border)' }}
           >
             + Add meal
@@ -205,9 +205,9 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
               : <div className="w-11 h-11 rounded-[9px] bg-meal-bg flex items-center justify-center text-xl flex-shrink-0">🍽️</div>
             }
             <div className="flex flex-col gap-0.5 min-w-0">
-              <span className="text-[13.5px] font-extrabold text-ink truncate">{mainItem?.name ?? sideItems[0]?.name}</span>
+              <span className="text-[17.5px] font-extrabold text-ink truncate">{mainItem?.name ?? sideItems[0]?.name}</span>
               {sideItems.length > 0 && (
-                <span className="text-[11.5px] font-semibold text-ink-soft truncate">
+                <span className="text-[15px] font-semibold text-ink-soft truncate">
                   with {sideItems.map(s => s.name).join(', ')}
                 </span>
               )}
@@ -220,7 +220,7 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
       {viewingAll && (
         <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center bg-black/30" onClick={closeDetail}>
           <div
-            className="bg-card-bg w-full max-w-[460px] rounded-t-[22px] sm:rounded-[22px] overflow-hidden flex flex-col"
+            className="bg-card-bg w-full sm:w-[80vw] sm:max-w-[80vw] sm:max-h-[80vh] rounded-t-[22px] sm:rounded-[22px] overflow-hidden flex flex-col"
             style={{ boxShadow: '0 -8px 30px rgba(0,0,0,0.15)', maxHeight: '88dvh' }}
             onClick={e => e.stopPropagation()}
           >
@@ -228,7 +228,7 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
             <div className="flex items-center px-[10px] py-[18px] pb-[14px] bg-header-bg border-b border-line gap-1">
               <ModalClose onClick={closeDetail} />
               <div className="flex flex-col gap-px ml-0.5">
-                <span className="text-[17px] font-extrabold text-ink capitalize">{dayName}</span>
+                <span className="text-[22px] font-extrabold text-ink capitalize">{dayName}</span>
               </div>
             </div>
 
@@ -236,14 +236,14 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
             {allRecipes.length === 0 ? (
               <>
                 <div className="flex flex-col items-center text-center px-6 pt-8 pb-2 gap-1">
-                  <span className="text-[34px] mb-1">🍽️</span>
-                  <span className="text-[15px] font-extrabold text-ink">Nothing planned yet</span>
-                  <span className="text-[13px] text-ink-soft">Add a meal to get started</span>
+                  <span className="text-[44px] mb-1">🍽️</span>
+                  <span className="text-[19.5px] font-extrabold text-ink">Nothing planned yet</span>
+                  <span className="text-[17px] text-ink-soft">Add a meal to get started</span>
                 </div>
                 <div className="px-5 pt-4 pb-[22px]">
                   <button
                     onClick={() => setOpen(true)}
-                    className="w-full py-[14px] rounded-[14px] text-[14.5px] font-extrabold bg-meal-accent text-white border-0 cursor-pointer"
+                    className="w-full py-[14px] rounded-[14px] text-[19px] font-extrabold bg-meal-accent text-white border-0 cursor-pointer"
                   >
                     Add meal
                   </button>
@@ -271,7 +271,7 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
                   )}
                   <button
                     onClick={() => { setSelectedMainId(meal.main.recipeId); setStep('sides'); setOpen(true) }}
-                    className="flex items-center justify-center gap-1.5 rounded-xl py-3 text-[13px] font-bold text-meal-accent mt-0.5 border-0 bg-transparent cursor-pointer"
+                    className="flex items-center justify-center gap-1.5 rounded-xl py-3 text-[17px] font-bold text-meal-accent mt-0.5 border-0 bg-transparent cursor-pointer"
                     style={{ border: '1.5px dashed var(--color-meal-border)' }}
                   >
                     + Add a side
@@ -280,14 +280,14 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
                 <div className="flex gap-2.5 px-[18px] pb-5 pt-[14px] border-t border-line">
                   <button
                     onClick={() => setOpen(true)}
-                    className="flex-1 py-[14px] rounded-[14px] text-[14.5px] font-extrabold border-0 cursor-pointer text-ink"
+                    className="flex-1 py-[14px] rounded-[14px] text-[19px] font-extrabold border-0 cursor-pointer text-ink"
                     style={{ background: 'rgba(0,0,0,0.06)' }}
                   >
                     Change main
                   </button>
                   <button
                     onClick={closeDetail}
-                    className="flex-1 py-[14px] rounded-[14px] text-[14.5px] font-extrabold bg-meal-accent text-white border-0 cursor-pointer"
+                    className="flex-1 py-[14px] rounded-[14px] text-[19px] font-extrabold bg-meal-accent text-white border-0 cursor-pointer"
                   >
                     Done
                   </button>
@@ -308,7 +308,7 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
           >
             {/* Header */}
             <div className="flex items-center justify-between px-[10px] py-[18px] pb-[14px] bg-header-bg border-b border-line">
-              <span className="text-[17px] font-extrabold text-ink ml-2.5">{step === 'main' ? 'Pick a meal' : 'Add sides'}</span>
+              <span className="text-[22px] font-extrabold text-ink ml-2.5">{step === 'main' ? 'Pick a meal' : 'Add sides'}</span>
               <ModalClose onClick={() => setOpen(false)} />
             </div>
 
@@ -319,7 +319,7 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder={step === 'main' ? 'Search by name or ingredient…' : 'Search for more sides…'}
-                className="w-full px-[14px] py-3 rounded-xl text-[14px] text-ink placeholder:text-ink-soft outline-none"
+                className="w-full px-[14px] py-3 rounded-xl text-[18px] text-ink placeholder:text-ink-soft outline-none"
                 style={{ border: '1.5px solid var(--color-meal-border)', background: 'var(--color-meal-bg)' }}
                 autoFocus
               />
@@ -338,14 +338,14 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
                     </div>
                   ))}
                   {recipes.length === 0 && (
-                    <div className="col-span-2 text-center text-ink-soft mt-12 text-[14px]">No recipes found</div>
+                    <div className="col-span-2 text-center text-ink-soft mt-12 text-[18px]">No recipes found</div>
                   )}
                 </>
               ) : (
                 <>
                   {suggestedSides.length > 0 && (
                     <>
-                      <div className="col-span-2 text-[10.5px] font-extrabold tracking-[0.08em] uppercase text-ink-soft mt-1">Suggested sides</div>
+                      <div className="col-span-2 text-[13.5px] font-extrabold tracking-[0.08em] uppercase text-ink-soft mt-1">Suggested sides</div>
                       {suggestedSides.map(r => (
                         <div key={r.id} className="relative">
                           <RecipeCard r={r} onClick={toggleSide} selected={selectedSideIds.has(r.id)} />
@@ -355,7 +355,7 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
                   )}
                   {sideResults.length > 0 && (
                     <>
-                      <div className="col-span-2 text-[10.5px] font-extrabold tracking-[0.08em] uppercase text-ink-soft mt-1">
+                      <div className="col-span-2 text-[13.5px] font-extrabold tracking-[0.08em] uppercase text-ink-soft mt-1">
                         {suggestedSides.length > 0 ? 'Other sides' : 'Sides'}
                       </div>
                       {sideResults.map(r => (
@@ -366,7 +366,7 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
                     </>
                   )}
                   {suggestedSides.length === 0 && sideResults.length === 0 && (
-                    <div className="col-span-2 text-center text-ink-soft mt-12 text-[14px]">No sides found. Search above to add any recipe as a side.</div>
+                    <div className="col-span-2 text-center text-ink-soft mt-12 text-[18px]">No sides found. Search above to add any recipe as a side.</div>
                   )}
                 </>
               )}
@@ -378,14 +378,14 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
                 <>
                   <button
                     onClick={() => setStep('main')}
-                    className="flex-1 py-[14px] rounded-[14px] text-[14.5px] font-extrabold border-0 cursor-pointer text-ink"
+                    className="flex-1 py-[14px] rounded-[14px] text-[19px] font-extrabold border-0 cursor-pointer text-ink"
                     style={{ background: 'rgba(0,0,0,0.06)' }}
                   >
                     ← Back
                   </button>
                   <button
                     onClick={handleConfirm}
-                    className="flex-1 py-[14px] rounded-[14px] text-[14.5px] font-extrabold bg-meal-accent text-white border-0 cursor-pointer"
+                    className="flex-1 py-[14px] rounded-[14px] text-[19px] font-extrabold bg-meal-accent text-white border-0 cursor-pointer"
                   >
                     Confirm{selectedSideIds.size > 0 ? ` (${selectedSideIds.size} side${selectedSideIds.size > 1 ? 's' : ''})` : ''}
                   </button>
@@ -393,7 +393,7 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
               ) : (
                 <button
                   onClick={() => setOpen(false)}
-                  className="flex-1 py-[14px] rounded-[14px] text-[14.5px] font-extrabold border-0 cursor-pointer text-ink"
+                  className="flex-1 py-[14px] rounded-[14px] text-[19px] font-extrabold border-0 cursor-pointer text-ink"
                   style={{ background: 'rgba(0,0,0,0.06)' }}
                 >
                   Cancel
@@ -410,18 +410,23 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
 // Expandable item card for the meal detail modal
 function ItemCard({ r, expanded, onToggle, onRemove, details, onToggleFavourite }) {
   const isFavourite = details?.favourite ?? null
+  const totalIngredients = details?.components?.reduce((sum, c) => sum + (c.ingredients?.length ?? 0), 0) ?? null
+  const isExpandable = !details || (details.steps?.length > 0) || totalIngredients > 1
   return (
     <div className={`rounded-[14px] border ${r.isMain ? 'border-meal-border bg-meal-bg' : 'border-line bg-card-bg'}`}>
-      <div className="flex items-center gap-2.5 p-[10px_8px_10px_10px] cursor-pointer" onClick={onToggle}>
+      <div
+        className={`flex items-center gap-2.5 p-[10px_8px_10px_10px] ${isExpandable ? 'cursor-pointer' : ''}`}
+        onClick={isExpandable ? onToggle : undefined}
+      >
         {r.image
           ? <img src={r.image} alt={r.name} className="w-11 h-11 rounded-[10px] object-cover flex-shrink-0" />
           : <div className="w-11 h-11 rounded-[10px] bg-meal-bg flex items-center justify-center text-2xl flex-shrink-0">🍽️</div>
         }
         <div className="flex-1 min-w-0">
-          <div className={`text-[10px] font-extrabold uppercase tracking-[0.05em] ${r.isMain ? 'text-meal-accent' : 'text-ink-soft'}`}>
+          <div className={`text-[13px] font-extrabold uppercase tracking-[0.05em] ${r.isMain ? 'text-meal-accent' : 'text-ink-soft'}`}>
             {r.isMain ? 'Main' : 'Side'}
           </div>
-          <div className="text-[14.5px] font-bold text-ink truncate">{r.name}</div>
+          <div className="text-[19px] font-bold text-ink truncate">{r.name}</div>
         </div>
         <div className="flex items-center gap-0.5 flex-shrink-0">
           <button
@@ -433,14 +438,14 @@ function ItemCard({ r, expanded, onToggle, onRemove, details, onToggleFavourite 
             {isFavourite ? '♥' : '♡'}
           </button>
           <button
-            className={`w-9 h-9 rounded-[10px] flex items-center justify-center text-[15px] text-ink-soft border-0 bg-transparent cursor-pointer transition-transform ${expanded ? 'rotate-180' : ''}`}
+            className={`w-9 h-9 rounded-[10px] flex items-center justify-center text-[19.5px] text-ink-soft border-0 bg-transparent cursor-pointer transition-transform ${expanded ? 'rotate-180' : ''} ${isExpandable ? '' : 'invisible'}`}
             onClick={e => { e.stopPropagation(); onToggle() }}
             style={{ transition: 'transform 0.15s ease' }}
           >
             ⌄
           </button>
           <button
-            className="w-9 h-9 rounded-[10px] flex items-center justify-center text-[17px] border-0 bg-transparent cursor-pointer"
+            className="w-9 h-9 rounded-[10px] flex items-center justify-center text-[22px] border-0 bg-transparent cursor-pointer"
             style={{ color: '#C24A4A' }}
             onClick={e => { e.stopPropagation(); onRemove() }}
           >
@@ -449,12 +454,12 @@ function ItemCard({ r, expanded, onToggle, onRemove, details, onToggleFavourite 
         </div>
       </div>
       {expanded && (
-        <div className="px-4 pb-4 pt-0 border-t border-line text-[13px] text-ink leading-relaxed" style={{ paddingLeft: 64 }}>
+        <div className="px-4 pb-4 pt-0 border-t border-line text-[17px] text-ink leading-relaxed" style={{ paddingLeft: 64 }}>
           {details ? (
             <>
               {details.components?.map((component, i) => (
                 <div key={i} className="mb-4 mt-3">
-                  {component.name && <div className="text-[10.5px] font-extrabold uppercase tracking-[0.08em] text-ink-soft mb-1">{component.name}</div>}
+                  {component.name && <div className="text-[13.5px] font-extrabold uppercase tracking-[0.08em] text-ink-soft mb-1">{component.name}</div>}
                   <ul className="space-y-0.5 pl-4 list-disc">
                     {component.ingredients?.map((ing, j) => (
                       <li key={j}>{ing.revisedMeasurement ?? ing.measurement} {ing.ingredientName?.name}{ing.note ? ` (${ing.note})` : ''}</li>

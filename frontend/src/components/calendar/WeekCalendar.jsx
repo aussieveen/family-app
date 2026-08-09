@@ -48,31 +48,31 @@ export default function WeekCalendar({ members }) {
       <div className="flex items-center gap-3 px-[18px] py-4 bg-header-bg border-b border-line">
         <button
           onClick={() => setWeekStart(w => subWeeks(w, 1))}
-          className="flex items-center gap-1.5 bg-white/70 rounded-[10px] px-[14px] py-[10px] text-[14px] font-bold text-ink min-h-[40px] border-0 cursor-pointer flex-shrink-0"
+          className="flex items-center gap-1.5 bg-white/70 rounded-[10px] px-[14px] py-[10px] text-[18px] font-bold text-ink min-h-[40px] border-0 cursor-pointer flex-shrink-0"
         >
           ← Prev
         </button>
-        <span className="flex-1 text-center text-[15px] font-extrabold tracking-[0.01em] text-ink">
+        <span className="flex-1 text-center text-[19.5px] font-extrabold tracking-[0.01em] text-ink">
           {format(weekStart, 'MMM d')} – {format(days[6], 'MMM d, yyyy')}
         </span>
         <div className="flex items-center gap-2 flex-shrink-0">
           <button
             onClick={() => setShoppingOpen(true)}
-            className="flex items-center gap-[7px] bg-utility-accent text-white rounded-[10px] px-[14px] py-[10px] text-[13.5px] font-bold min-h-[40px] border-0 cursor-pointer hover:brightness-105"
+            className="flex items-center gap-[7px] bg-utility-accent text-white rounded-[10px] px-[14px] py-[10px] text-[17.5px] font-bold min-h-[40px] border-0 cursor-pointer hover:brightness-105"
           >
             🛒 Shopping List
           </button>
           <button
             onClick={() => setWeekStart(todayWeekStart)}
             disabled={isCurrentWeek}
-            className={`bg-today-accent text-white rounded-[10px] px-[14px] py-[10px] text-[13.5px] font-bold min-h-[40px] border-0 transition-opacity ${isCurrentWeek ? 'opacity-50 cursor-default' : 'cursor-pointer hover:brightness-105'}`}
+            className={`bg-today-accent text-white rounded-[10px] px-[14px] py-[10px] text-[17.5px] font-bold min-h-[40px] border-0 transition-opacity ${isCurrentWeek ? 'opacity-50 cursor-default' : 'cursor-pointer hover:brightness-105'}`}
           >
             Today
           </button>
         </div>
         <button
           onClick={() => setWeekStart(w => addWeeks(w, 1))}
-          className="flex items-center gap-1.5 bg-white/70 rounded-[10px] px-[14px] py-[10px] text-[14px] font-bold text-ink min-h-[40px] border-0 cursor-pointer flex-shrink-0"
+          className="flex items-center gap-1.5 bg-white/70 rounded-[10px] px-[14px] py-[10px] text-[18px] font-bold text-ink min-h-[40px] border-0 cursor-pointer flex-shrink-0"
         >
           Next →
         </button>
@@ -82,9 +82,9 @@ export default function WeekCalendar({ members }) {
       {members.length > 0 && (
         <div className="flex gap-[14px] items-center px-[18px] py-[10px] border-b border-line flex-wrap">
           {members.map(m => (
-            <div key={m.id} className="flex items-center gap-1.5 text-[12.5px] font-semibold text-ink-soft">
+            <div key={m.id} className="flex items-center gap-1.5 text-[16px] font-semibold text-ink-soft">
               <span
-                className="w-[18px] h-[18px] rounded-full flex items-center justify-center text-[9.5px] font-extrabold text-white flex-shrink-0"
+                className="w-[18px] h-[18px] rounded-full flex items-center justify-center text-[12.5px] font-extrabold text-white flex-shrink-0"
                 style={{ backgroundColor: m.avatarColour }}
               >
                 {m.name[0]}
