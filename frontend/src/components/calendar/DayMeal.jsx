@@ -185,27 +185,36 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
   return (
     <>
       {/* Meal column inline panel */}
-      <button
-        onClick={() => setViewingAll(true)}
-        className="bg-meal-bg h-full w-full overflow-y-auto text-left flex flex-col gap-2 p-[10px_14px] justify-start hover:brightness-[0.97] transition-all cursor-pointer border-0"
-      >
+      <div className="bg-meal-bg h-full flex flex-col p-[10px_14px] justify-center">
         {allRecipes.length === 0 ? (
-          <div className="flex items-center justify-center gap-1.5 py-3 rounded-xl text-[12.5px] font-extrabold text-meal-accent"
-            style={{ border: '1.5px dashed var(--color-meal-border)' }}>
-            <span>+</span><span>Add meal</span>
-          </div>
+          <button
+            onClick={() => setOpen(true)}
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl text-[13px] font-extrabold text-meal-accent cursor-pointer border-0 bg-transparent"
+            style={{ border: '1.5px dashed var(--color-meal-border)' }}
+          >
+            + Add meal
+          </button>
         ) : (
-          allRecipes.map(r => (
-            <div key={r.recipeId} className="flex items-center gap-2 p-1.5 bg-card-bg rounded-xl border border-meal-border min-h-[44px]">
-              {r.image
-                ? <img src={r.image} alt={r.name} className="w-8 h-8 rounded-lg object-cover flex-shrink-0" />
-                : <div className="w-8 h-8 rounded-lg bg-meal-bg flex items-center justify-center text-sm flex-shrink-0">🍽️</div>
-              }
-              <span className="text-[12.5px] font-bold text-ink break-words min-w-0 leading-tight">{r.name}</span>
+          <button
+            onClick={() => setViewingAll(true)}
+            className="flex items-center gap-2.5 p-2 bg-card-bg rounded-xl border border-meal-border min-h-[60px] text-left cursor-pointer border-0 hover:brightness-[0.97] transition-all w-full"
+            style={{ border: '1.5px solid var(--color-meal-border)' }}
+          >
+            {mainItem?.image
+              ? <img src={mainItem.image} alt={mainItem.name} className="w-11 h-11 rounded-[9px] object-cover flex-shrink-0" />
+              : <div className="w-11 h-11 rounded-[9px] bg-meal-bg flex items-center justify-center text-xl flex-shrink-0">🍽️</div>
+            }
+            <div className="flex flex-col gap-0.5 min-w-0">
+              <span className="text-[13.5px] font-extrabold text-ink truncate">{mainItem?.name ?? sideItems[0]?.name}</span>
+              {sideItems.length > 0 && (
+                <span className="text-[11.5px] font-semibold text-ink-soft truncate">
+                  with {sideItems.map(s => s.name).join(', ')}
+                </span>
+              )}
             </div>
-          ))
+          </button>
         )}
-      </button>
+      </div>
 
       {/* Meal detail / management modal */}
       {viewingAll && (
