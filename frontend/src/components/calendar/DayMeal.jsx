@@ -251,7 +251,7 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
               </>
             ) : (
               <>
-                <div className="overflow-y-auto px-[18px] py-[14px] flex flex-col gap-2.5">
+                <div className="flex-1 min-h-0 overflow-y-auto px-[18px] py-[14px] flex flex-col gap-2.5" style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}>
                   {mainItem && (
                     <>
                       <Eyebrow className="mt-0">Main</Eyebrow>
@@ -323,7 +323,7 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
             </div>
 
             {/* Grid */}
-            <div className="flex-1 overflow-y-auto px-[18px] py-3 grid grid-cols-2 gap-3 content-start">
+            <div className="flex-1 min-h-0 overflow-y-auto px-[18px] py-3 grid grid-cols-2 gap-3 content-start" style={{ WebkitOverflowScrolling: 'touch' }}>
               {step === 'main' ? (
                 <>
                   {recipes.map(r => (
