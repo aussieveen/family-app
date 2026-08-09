@@ -185,7 +185,7 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
   return (
     <>
       {/* Meal column inline panel */}
-      <div className="bg-meal-bg h-full flex flex-col p-[10px_14px] justify-center">
+      <div className="bg-meal-bg h-full flex flex-col p-[10px_14px] justify-center overflow-hidden min-w-0">
         {allRecipes.length === 0 ? (
           <button
             onClick={() => setOpen(true)}
