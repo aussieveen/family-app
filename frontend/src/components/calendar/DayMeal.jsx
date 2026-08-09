@@ -411,7 +411,7 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
 function ItemCard({ r, expanded, onToggle, onRemove, details, onToggleFavourite }) {
   const isFavourite = details?.favourite ?? null
   return (
-    <div className={`rounded-[14px] overflow-hidden border ${r.isMain ? 'border-meal-border bg-meal-bg' : 'border-line bg-card-bg'}`}>
+    <div className={`rounded-[14px] border ${r.isMain ? 'border-meal-border bg-meal-bg' : 'border-line bg-card-bg'}`}>
       <div className="flex items-center gap-2.5 p-[10px_8px_10px_10px] cursor-pointer" onClick={onToggle}>
         {r.image
           ? <img src={r.image} alt={r.name} className="w-11 h-11 rounded-[10px] object-cover flex-shrink-0" />
