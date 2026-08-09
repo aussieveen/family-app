@@ -220,8 +220,8 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
       {viewingAll && (
         <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center bg-black/30" onClick={closeDetail}>
           <div
-            className="bg-card-bg w-full max-w-[460px] max-h-[88vh] rounded-t-[22px] sm:rounded-[22px] flex flex-col overflow-hidden"
-            style={{ boxShadow: '0 -8px 30px rgba(0,0,0,0.15)' }}
+            className="bg-card-bg w-full max-w-[460px] rounded-t-[22px] sm:rounded-[22px] flex flex-col overflow-hidden"
+            style={{ boxShadow: '0 -8px 30px rgba(0,0,0,0.15)', maxHeight: 'min(88dvh, 88vh)' }}
             onClick={e => e.stopPropagation()}
           >
             {/* Header */}
@@ -299,8 +299,8 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
       {open && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/30 p-4" onClick={() => setOpen(false)}>
           <div
-            className="bg-card-bg w-full max-w-[520px] max-h-[88vh] rounded-[22px] flex flex-col overflow-hidden"
-            style={{ boxShadow: '0 12px 40px rgba(0,0,0,0.18)' }}
+            className="bg-card-bg w-full max-w-[520px] rounded-[22px] flex flex-col overflow-hidden"
+            style={{ boxShadow: '0 12px 40px rgba(0,0,0,0.18)', maxHeight: 'min(88dvh, 88vh)' }}
             onClick={e => e.stopPropagation()}
           >
             {/* Header */}

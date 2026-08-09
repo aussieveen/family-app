@@ -43,7 +43,7 @@ export default function WeekCalendar({ members }) {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full min-h-0">
       {/* Week nav */}
       <div className="flex items-center gap-3 px-[18px] py-4 bg-header-bg border-b border-line">
         <button
