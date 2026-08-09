@@ -20,10 +20,10 @@ export default function DayColumn({ day, events, meal, weekStartDate, today, onA
 
       {/* Day label */}
       <div className="flex flex-col gap-0.5 pt-[14px] pb-[10px] pl-4 pr-[10px] border-r border-line">
-        <span className={`text-[11.5px] font-extrabold uppercase tracking-[0.06em] ${today ? 'text-today-accent' : 'text-ink-soft'}`}>
+        <span className={`text-[15px] font-extrabold uppercase tracking-[0.06em] ${today ? 'text-today-accent' : 'text-ink-soft'}`}>
           {format(day, 'EEE')}
         </span>
-        <span className="text-[21px] font-extrabold text-ink leading-none">
+        <span className="text-[27px] font-extrabold text-ink leading-none">
           {format(day, 'd')}
         </span>
       </div>
@@ -43,7 +43,7 @@ export default function DayColumn({ day, events, meal, weekStartDate, today, onA
         ))}
         <button
           onClick={onAddEvent}
-          className={`flex items-center justify-center gap-1.5 text-[13px] font-bold text-ink-soft px-3 py-2 rounded-xl cursor-pointer border-0 bg-transparent ${events.length === 0 ? 'flex-1' : 'self-start min-h-[40px]'}`}
+          className={`flex items-center justify-center gap-1.5 text-[17px] font-bold text-ink-soft px-3 py-2 rounded-xl cursor-pointer border-0 bg-transparent ${events.length === 0 ? 'flex-1' : 'self-start min-h-[40px]'}`}
           style={{ border: '1.5px dashed rgba(0,0,0,0.15)' }}
         >
           + Add event
