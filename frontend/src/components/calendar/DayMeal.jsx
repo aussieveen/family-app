@@ -220,12 +220,12 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
       {viewingAll && (
         <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center bg-black/30" onClick={closeDetail}>
           <div
-            className="bg-card-bg w-full max-w-[460px] rounded-t-[22px] sm:rounded-[22px] flex flex-col overflow-hidden"
-            style={{ boxShadow: '0 -8px 30px rgba(0,0,0,0.15)', maxHeight: 'min(88dvh, 88vh)' }}
+            className="bg-card-bg w-full max-w-[460px] rounded-t-[22px] sm:rounded-[22px] overflow-hidden flex flex-col"
+            style={{ boxShadow: '0 -8px 30px rgba(0,0,0,0.15)', maxHeight: '88dvh' }}
             onClick={e => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex items-center px-[10px] py-[18px] pb-[14px] bg-header-bg border-b border-line flex-shrink-0 gap-1">
+            <div className="flex items-center px-[10px] py-[18px] pb-[14px] bg-header-bg border-b border-line gap-1">
               <ModalClose onClick={closeDetail} />
               <div className="flex flex-col gap-px ml-0.5">
                 <span className="text-[17px] font-extrabold text-ink capitalize">{dayName}</span>
@@ -251,7 +251,10 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
               </>
             ) : (
               <>
-                <div className="flex-1 min-h-0 overflow-y-auto px-[18px] py-[14px] flex flex-col gap-2.5" style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}>
+                <div
+                  className="overflow-y-auto flex-1 min-h-0 px-[18px] py-[14px] flex flex-col gap-2.5"
+                  style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}
+                >
                   {mainItem && (
                     <>
                       <Eyebrow className="mt-0">Main</Eyebrow>
@@ -274,7 +277,7 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
                     + Add a side
                   </button>
                 </div>
-                <div className="flex gap-2.5 px-[18px] pb-5 pt-[14px] border-t border-line flex-shrink-0">
+                <div className="flex gap-2.5 px-[18px] pb-5 pt-[14px] border-t border-line">
                   <button
                     onClick={() => setOpen(true)}
                     className="flex-1 py-[14px] rounded-[14px] text-[14.5px] font-extrabold border-0 cursor-pointer text-ink"
@@ -299,18 +302,18 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
       {open && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/30 p-4" onClick={() => setOpen(false)}>
           <div
-            className="bg-card-bg w-full max-w-[520px] rounded-[22px] flex flex-col overflow-hidden"
-            style={{ boxShadow: '0 12px 40px rgba(0,0,0,0.18)', maxHeight: 'min(88dvh, 88vh)' }}
+            className="bg-card-bg w-full max-w-[520px] rounded-[22px] overflow-hidden"
+            style={{ boxShadow: '0 12px 40px rgba(0,0,0,0.18)' }}
             onClick={e => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-[10px] py-[18px] pb-[14px] bg-header-bg border-b border-line flex-shrink-0">
+            <div className="flex items-center justify-between px-[10px] py-[18px] pb-[14px] bg-header-bg border-b border-line">
               <span className="text-[17px] font-extrabold text-ink ml-2.5">{step === 'main' ? 'Pick a meal' : 'Add sides'}</span>
               <ModalClose onClick={() => setOpen(false)} />
             </div>
 
             {/* Search */}
-            <div className="px-[18px] pt-[14px] pb-1.5 flex-shrink-0">
+            <div className="px-[18px] pt-[14px] pb-1.5">
               <input
                 type="text"
                 value={search}
@@ -323,7 +326,10 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
             </div>
 
             {/* Grid */}
-            <div className="flex-1 min-h-0 overflow-y-auto px-[18px] py-3 grid grid-cols-2 gap-3 content-start" style={{ WebkitOverflowScrolling: 'touch' }}>
+            <div
+              className="overflow-y-auto px-[18px] py-3 grid grid-cols-2 gap-3 content-start"
+              style={{ maxHeight: 'calc(88dvh - 200px)', WebkitOverflowScrolling: 'touch' }}
+            >
               {step === 'main' ? (
                 <>
                   {recipes.map(r => (
@@ -367,7 +373,7 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
             </div>
 
             {/* Footer */}
-            <div className="flex gap-2.5 px-[18px] pb-5 pt-[14px] border-t border-line flex-shrink-0">
+            <div className="flex gap-2.5 px-[18px] pb-5 pt-[14px] border-t border-line">
               {step === 'sides' ? (
                 <>
                   <button
