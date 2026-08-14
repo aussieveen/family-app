@@ -20,6 +20,15 @@ export async function assignMeal(weekStartDate, day, mainRecipeId, sideRecipeIds
   return res.json()
 }
 
+export async function assignFreeformMeal(weekStartDate, day, freeformName) {
+  const res = await fetch(`${BASE}/api/v1/plan/${weekStartDate}/${day}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mainRecipeId: null, sideRecipeIds: [], freeformName }),
+  })
+  return res.json()
+}
+
 export async function clearMeal(weekStartDate, day) {
   await fetch(`${BASE}/api/v1/plan/${weekStartDate}/${day}`, { method: 'DELETE' })
 }
