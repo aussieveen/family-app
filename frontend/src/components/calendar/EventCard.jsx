@@ -1,5 +1,3 @@
-import { format, parseISO } from 'date-fns'
-
 export default function EventCard({ event, onClick }) {
   const who = event.who?.slice(0, 3) ?? []
 
@@ -11,7 +9,7 @@ export default function EventCard({ event, onClick }) {
       <div className="font-extrabold text-ink truncate">{event.title}</div>
       {!event.allDay && (
         <div className="text-[15.5px] font-bold text-event-text mt-px">
-          {format(parseISO(event.startAt), 'HH:mm')}
+          {event.startAt?.slice(11, 16)}
         </div>
       )}
       {who.length > 0 && (

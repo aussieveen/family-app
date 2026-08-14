@@ -63,8 +63,8 @@ export default function EventModal({ event, defaultDate, members, onClose, onSav
     setSaving(true)
     const payload = {
       title,
-      startAt: allDay ? `${startAt.slice(0, 10)}T00:00:00+00:00` : `${startAt}:00+00:00`,
-      endAt: endAt ? `${endAt}:00+00:00` : null,
+      startAt: allDay ? `${startAt.slice(0, 10)}T00:00:00` : `${startAt}:00`,
+      endAt: endAt ? `${endAt}:00` : null,
       allDay,
       whoIds,
       recurrence: recurring ? { frequency, interval: Number(interval), daysOfWeek: frequency === 'weekly' ? daysOfWeek : null, until: until || null } : null,

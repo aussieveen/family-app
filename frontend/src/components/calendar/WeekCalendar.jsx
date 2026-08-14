@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { format, startOfWeek, addDays, addWeeks, subWeeks, isToday } from 'date-fns'
 import { getEvents } from '../../api/familyApp'
 import { getPlan } from '../../api/mealPlanner'
@@ -6,14 +6,20 @@ import DayColumn from './DayColumn'
 import EventModal from './EventModal'
 import ShoppingListModal from '../meal-planning/ShoppingListModal'
 
+const POLL_INTERVAL_MS = 60_000
+
 export default function WeekCalendar({ members }) {
   const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date(), { weekStartsOn: 1 }))
+  const [today, setToday] = useState(() => new Date())
   const [events, setEvents] = useState([])
   const [plan, setPlan] = useState(null)
   const [modal, setModal] = useState(null) // { event } | { date } | null
   const [shoppingOpen, setShoppingOpen] = useState(false)
+  const weekStartRef = useRef(weekStart)
 
-  const todayWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 })
+  useEffect(() => { weekStartRef.current = weekStart }, [weekStart])
+
+  const todayWeekStart = startOfWeek(today, { weekStartsOn: 1 })
   const isCurrentWeek = weekStart.getTime() === todayWeekStart.getTime()
   const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
   const from = format(weekStart, 'yyyy-MM-dd')
@@ -23,6 +29,18 @@ export default function WeekCalendar({ members }) {
     getEvents(from, to).then(setEvents)
     getPlan(from).then(setPlan)
   }, [from, to])
+
+  // Poll every minute: refresh plan, events, and re-evaluate today
+  useEffect(() => {
+    const id = setInterval(() => {
+      const currentFrom = format(weekStartRef.current, 'yyyy-MM-dd')
+      const currentTo = format(addDays(weekStartRef.current, 6), 'yyyy-MM-dd')
+      setToday(new Date())
+      getEvents(currentFrom, currentTo).then(setEvents)
+      getPlan(currentFrom).then(setPlan)
+    }, POLL_INTERVAL_MS)
+    return () => clearInterval(id)
+  }, [])
 
   function refresh() {
     getEvents(from, to).then(setEvents)
@@ -104,7 +122,7 @@ export default function WeekCalendar({ members }) {
               events={eventsForDay(day)}
               meal={mealForDay(day)}
               weekStartDate={from}
-              today={isToday(day)}
+              today={isToday(day) || format(day, 'yyyy-MM-dd') === format(today, 'yyyy-MM-dd')}
               onAddEvent={() => setModal({ date: format(day, 'yyyy-MM-dd') })}
               onSelectEvent={event => setModal({ event })}
               onMealUpdated={refreshPlan}

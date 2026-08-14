@@ -148,6 +148,7 @@ class EventController extends AbstractController
         }
 
         $startAt = DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $body['startAt'])
+            ?: DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s', $body['startAt'])
             ?: DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $body['startAt'])
             ?: DateTimeImmutable::createFromFormat('Y-m-d', $body['startAt']);
 
@@ -166,6 +167,7 @@ class EventController extends AbstractController
 
         if (!empty($body['endAt'])) {
             $endAt = DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $body['endAt'])
+                ?: DateTimeImmutable::createFromFormat('Y-m-d\TH:i:s', $body['endAt'])
                 ?: DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $body['endAt'])
                 ?: DateTimeImmutable::createFromFormat('Y-m-d', $body['endAt']);
             $event->setEndAt($endAt ?: null);

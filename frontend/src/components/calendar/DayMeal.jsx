@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getRecipe, getRecipes, getSuggestedSides, toggleFavourite } from '../../api/cookbook'
-import { assignMeal, clearMeal } from '../../api/mealPlanner'
+import { assignMeal, assignFreeformMeal, clearMeal } from '../../api/mealPlanner'
 
 // Shared close button used in modals
 function ModalClose({ onClick }) {
@@ -48,6 +48,8 @@ function RecipeCard({ r, onClick, selected }) {
 export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated }) {
   const [open, setOpen] = useState(false)
   const [step, setStep] = useState('main') // 'main' | 'sides'
+  const [pickerMode, setPickerMode] = useState('cookbook') // 'cookbook' | 'freeform'
+  const [freeformName, setFreeformName] = useState('')
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [recipes, setRecipes] = useState([])
@@ -106,6 +108,8 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
       setSelectedSideIds(new Set())
       setSuggestedSides([])
       setAllOtherSides([])
+      setPickerMode('cookbook')
+      setFreeformName('')
     }
   }, [open])
 
@@ -134,6 +138,13 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
 
   async function handleConfirm() {
     await assignMeal(weekStartDate, dayName, selectedMainId, [...selectedSideIds])
+    setOpen(false)
+    onMealUpdated()
+  }
+
+  async function handleFreeformConfirm() {
+    if (!freeformName.trim()) return
+    await assignFreeformMeal(weekStartDate, dayName, freeformName.trim())
     setOpen(false)
     onMealUpdated()
   }
@@ -312,94 +323,148 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
               <ModalClose onClick={() => setOpen(false)} />
             </div>
 
-            {/* Search */}
-            <div className="px-[18px] pt-[14px] pb-1.5">
-              <input
-                type="text"
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                placeholder={step === 'main' ? 'Search by name or ingredient…' : 'Search for more sides…'}
-                className="w-full px-[14px] py-3 rounded-xl text-[18px] text-ink placeholder:text-ink-soft outline-none"
-                style={{ border: '1.5px solid var(--color-meal-border)', background: 'var(--color-meal-bg)' }}
-                autoFocus
-              />
-            </div>
+            {/* Tabs — only shown on the main step */}
+            {step === 'main' && (
+              <div className="flex border-b border-line px-[18px]">
+                <button
+                  onClick={() => setPickerMode('cookbook')}
+                  className={`py-[11px] px-4 text-[16px] font-bold border-b-2 -mb-px transition-colors ${pickerMode === 'cookbook' ? 'border-meal-accent text-meal-accent' : 'border-transparent text-ink-soft'}`}
+                >
+                  Cookbook
+                </button>
+                <button
+                  onClick={() => setPickerMode('freeform')}
+                  className={`py-[11px] px-4 text-[16px] font-bold border-b-2 -mb-px transition-colors ${pickerMode === 'freeform' ? 'border-meal-accent text-meal-accent' : 'border-transparent text-ink-soft'}`}
+                >
+                  Freeform
+                </button>
+              </div>
+            )}
 
-            {/* Grid */}
-            <div
-              className="overflow-y-auto px-[18px] py-3 grid grid-cols-2 gap-3 content-start"
-              style={{ maxHeight: 'calc(88dvh - 200px)', WebkitOverflowScrolling: 'touch' }}
-            >
-              {step === 'main' ? (
-                <>
-                  {recipes.map(r => (
-                    <div key={r.id} className="relative">
-                      <RecipeCard r={r} onClick={id => { setSelectedMainId(id); setStep('sides') }} />
-                    </div>
-                  ))}
-                  {recipes.length === 0 && (
-                    <div className="col-span-2 text-center text-ink-soft mt-12 text-[18px]">No recipes found</div>
-                  )}
-                </>
-              ) : (
-                <>
-                  {suggestedSides.length > 0 && (
-                    <>
-                      <div className="col-span-2 text-[13.5px] font-extrabold tracking-[0.08em] uppercase text-ink-soft mt-1">Suggested sides</div>
-                      {suggestedSides.map(r => (
-                        <div key={r.id} className="relative">
-                          <RecipeCard r={r} onClick={toggleSide} selected={selectedSideIds.has(r.id)} />
-                        </div>
-                      ))}
-                    </>
-                  )}
-                  {sideResults.length > 0 && (
-                    <>
-                      <div className="col-span-2 text-[13.5px] font-extrabold tracking-[0.08em] uppercase text-ink-soft mt-1">
-                        {suggestedSides.length > 0 ? 'Other sides' : 'Sides'}
-                      </div>
-                      {sideResults.map(r => (
-                        <div key={r.id} className="relative">
-                          <RecipeCard r={r} onClick={toggleSide} selected={selectedSideIds.has(r.id)} />
-                        </div>
-                      ))}
-                    </>
-                  )}
-                  {suggestedSides.length === 0 && sideResults.length === 0 && (
-                    <div className="col-span-2 text-center text-ink-soft mt-12 text-[18px]">No sides found. Search above to add any recipe as a side.</div>
-                  )}
-                </>
-              )}
-            </div>
-
-            {/* Footer */}
-            <div className="flex gap-2.5 px-[18px] pb-5 pt-[14px] border-t border-line">
-              {step === 'sides' ? (
-                <>
+            {step === 'main' && pickerMode === 'freeform' ? (
+              /* Freeform entry */
+              <>
+                <div className="flex-1 flex flex-col items-center justify-center gap-4 px-[18px] py-8">
+                  <p className="text-[17px] text-ink-soft text-center">Type anything — a takeaway, a quick meal, whatever you like.</p>
+                  <input
+                    type="text"
+                    value={freeformName}
+                    onChange={e => setFreeformName(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleFreeformConfirm()}
+                    placeholder="e.g. Chinese takeaway"
+                    className="w-full px-[14px] py-3 rounded-xl text-[18px] text-ink placeholder:text-ink-soft outline-none"
+                    style={{ border: '1.5px solid var(--color-meal-border)', background: 'var(--color-meal-bg)' }}
+                  />
+                </div>
+                <div className="flex gap-2.5 px-[18px] pb-5 pt-[14px] border-t border-line">
                   <button
-                    onClick={() => setStep('main')}
+                    onClick={() => setOpen(false)}
                     className="flex-1 py-[14px] rounded-[14px] text-[19px] font-extrabold border-0 cursor-pointer text-ink"
                     style={{ background: 'rgba(0,0,0,0.06)' }}
                   >
-                    ← Back
+                    Cancel
                   </button>
                   <button
-                    onClick={handleConfirm}
-                    className="flex-1 py-[14px] rounded-[14px] text-[19px] font-extrabold bg-meal-accent text-white border-0 cursor-pointer"
+                    onClick={handleFreeformConfirm}
+                    disabled={!freeformName.trim()}
+                    className="flex-1 py-[14px] rounded-[14px] text-[19px] font-extrabold bg-meal-accent text-white border-0 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                   >
-                    Confirm{selectedSideIds.size > 0 ? ` (${selectedSideIds.size} side${selectedSideIds.size > 1 ? 's' : ''})` : ''}
+                    Add meal
                   </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => setOpen(false)}
-                  className="flex-1 py-[14px] rounded-[14px] text-[19px] font-extrabold border-0 cursor-pointer text-ink"
-                  style={{ background: 'rgba(0,0,0,0.06)' }}
+                </div>
+              </>
+            ) : (
+              /* Cookbook / sides picker */
+              <>
+                {/* Search */}
+                <div className="px-[18px] pt-[14px] pb-1.5">
+                  <input
+                    type="text"
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    placeholder={step === 'main' ? 'Search by name or ingredient…' : 'Search for more sides…'}
+                    className="w-full px-[14px] py-3 rounded-xl text-[18px] text-ink placeholder:text-ink-soft outline-none"
+                    style={{ border: '1.5px solid var(--color-meal-border)', background: 'var(--color-meal-bg)' }}
+                  />
+                </div>
+
+                {/* Grid */}
+                <div
+                  className="overflow-y-auto px-[18px] py-3 grid grid-cols-2 gap-3 content-start"
+                  style={{ maxHeight: 'calc(88dvh - 200px)', WebkitOverflowScrolling: 'touch' }}
                 >
-                  Cancel
-                </button>
-              )}
-            </div>
+                  {step === 'main' ? (
+                    <>
+                      {recipes.map(r => (
+                        <div key={r.id} className="relative">
+                          <RecipeCard r={r} onClick={id => { setSelectedMainId(id); setStep('sides') }} />
+                        </div>
+                      ))}
+                      {recipes.length === 0 && (
+                        <div className="col-span-2 text-center text-ink-soft mt-12 text-[18px]">No recipes found</div>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      {suggestedSides.length > 0 && (
+                        <>
+                          <div className="col-span-2 text-[13.5px] font-extrabold tracking-[0.08em] uppercase text-ink-soft mt-1">Suggested sides</div>
+                          {suggestedSides.map(r => (
+                            <div key={r.id} className="relative">
+                              <RecipeCard r={r} onClick={toggleSide} selected={selectedSideIds.has(r.id)} />
+                            </div>
+                          ))}
+                        </>
+                      )}
+                      {sideResults.length > 0 && (
+                        <>
+                          <div className="col-span-2 text-[13.5px] font-extrabold tracking-[0.08em] uppercase text-ink-soft mt-1">
+                            {suggestedSides.length > 0 ? 'Other sides' : 'Sides'}
+                          </div>
+                          {sideResults.map(r => (
+                            <div key={r.id} className="relative">
+                              <RecipeCard r={r} onClick={toggleSide} selected={selectedSideIds.has(r.id)} />
+                            </div>
+                          ))}
+                        </>
+                      )}
+                      {suggestedSides.length === 0 && sideResults.length === 0 && (
+                        <div className="col-span-2 text-center text-ink-soft mt-12 text-[18px]">No sides found. Search above to add any recipe as a side.</div>
+                      )}
+                    </>
+                  )}
+                </div>
+
+                {/* Footer */}
+                <div className="flex gap-2.5 px-[18px] pb-5 pt-[14px] border-t border-line">
+                  {step === 'sides' ? (
+                    <>
+                      <button
+                        onClick={() => setStep('main')}
+                        className="flex-1 py-[14px] rounded-[14px] text-[19px] font-extrabold border-0 cursor-pointer text-ink"
+                        style={{ background: 'rgba(0,0,0,0.06)' }}
+                      >
+                        ← Back
+                      </button>
+                      <button
+                        onClick={handleConfirm}
+                        className="flex-1 py-[14px] rounded-[14px] text-[19px] font-extrabold bg-meal-accent text-white border-0 cursor-pointer"
+                      >
+                        Confirm{selectedSideIds.size > 0 ? ` (${selectedSideIds.size} side${selectedSideIds.size > 1 ? 's' : ''})` : ''}
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => setOpen(false)}
+                      className="flex-1 py-[14px] rounded-[14px] text-[19px] font-extrabold border-0 cursor-pointer text-ink"
+                      style={{ background: 'rgba(0,0,0,0.06)' }}
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
