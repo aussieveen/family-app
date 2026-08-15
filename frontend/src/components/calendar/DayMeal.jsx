@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getRecipe, getRecipes, getSuggestedSides, toggleFavourite } from '../../api/cookbook'
-import { assignMeal, assignFreeformMeal, clearMeal } from '../../api/mealPlanner'
+import { assignMeal, assignFreeformMeal, clearMeal, clearMiniMeal } from '../../api/mealPlanner'
 import MealMiniPicker from '../meal-planning/MealMiniPicker'
 
 // Shared close button used in modals
@@ -61,7 +61,9 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
   const [viewingAll, setViewingAll] = useState(false)
   const [expandedIds, setExpandedIds] = useState(new Set())
   const [recipeDetails, setRecipeDetails] = useState({})
-  const [miniPicker, setMiniPicker] = useState(null) // 'baby' | 'baking' | null
+  const [miniPicker, setMiniPicker] = useState(null)   // 'baby' | 'baking' | null
+  const [miniDetail, setMiniDetail] = useState(null)   // 'baby' | 'baking' | null
+  const [miniRecipeDetails, setMiniRecipeDetails] = useState({}) // recipeId -> full details
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search), 1000)
@@ -154,6 +156,7 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
   async function handleToggleFavourite(recipeId) {
     const { favourite } = await toggleFavourite(recipeId)
     setRecipeDetails(prev => ({ ...prev, [recipeId]: { ...prev[recipeId], favourite } }))
+    setMiniRecipeDetails(prev => prev[recipeId] ? { ...prev, [recipeId]: { ...prev[recipeId], favourite } } : prev)
   }
 
   async function handleRemoveMain() {
@@ -233,12 +236,12 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
           <MealMiniChip
             track="baby"
             assigned={meal?.baby ?? null}
-            onClick={() => setMiniPicker('baby')}
+            onClick={() => meal?.baby ? setMiniDetail('baby') : setMiniPicker('baby')}
           />
           <MealMiniChip
             track="baking"
             assigned={meal?.baking ?? null}
-            onClick={() => setMiniPicker('baking')}
+            onClick={() => meal?.baking ? setMiniDetail('baking') : setMiniPicker('baking')}
           />
         </div>
       </div>
@@ -495,6 +498,21 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
           onUpdated={onMealUpdated}
         />
       )}
+
+      {miniDetail && meal?.[miniDetail] && (
+        <MealMiniDetail
+          track={miniDetail}
+          ref={meal[miniDetail]}
+          weekStartDate={weekStartDate}
+          dayName={dayName}
+          details={miniRecipeDetails[meal[miniDetail].recipeId] ?? null}
+          onDetailsLoaded={d => setMiniRecipeDetails(prev => ({ ...prev, [meal[miniDetail].recipeId]: d }))}
+          onClose={() => setMiniDetail(null)}
+          onChange={() => { setMiniDetail(null); setMiniPicker(miniDetail) }}
+          onUpdated={onMealUpdated}
+          onToggleFavourite={handleToggleFavourite}
+        />
+      )}
     </>
   )
 }
@@ -532,6 +550,96 @@ function MealMiniChip({ track, assigned, onClick }) {
     >
       {c.icon} + {track === 'baby' ? "Leo" : 'Baking'}
     </button>
+  )
+}
+
+// Detail modal for an assigned mini-track recipe
+function MealMiniDetail({ track, ref: recipeRef, weekStartDate, dayName, details, onDetailsLoaded, onClose, onChange, onUpdated, onToggleFavourite }) {
+  const c = MINI_CONFIG[track]
+  const [expanded, setExpanded] = useState(false)
+
+  useEffect(() => {
+    if (recipeRef?.recipeId && !details) {
+      getRecipe(recipeRef.recipeId).then(onDetailsLoaded)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recipeRef?.recipeId])
+
+  async function handleRemove() {
+    await clearMiniMeal(weekStartDate, dayName, track)
+    onUpdated()
+    onClose()
+  }
+
+  const fakeR = {
+    recipeId: recipeRef.recipeId,
+    name: recipeRef.name,
+    image: recipeRef.image,
+    isMain: true,
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center sm:items-center bg-black/30"
+      onClick={onClose}
+    >
+      <div
+        className="bg-card-bg w-full sm:w-[80vw] sm:max-w-[80vw] rounded-t-[22px] sm:rounded-[22px] overflow-hidden flex flex-col"
+        style={{ boxShadow: '0 -8px 30px rgba(0,0,0,0.15)', maxHeight: '88dvh' }}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div
+          className="flex items-center px-[10px] py-[18px] pb-[14px] border-b border-line gap-1 flex-shrink-0"
+          style={{ background: c.bg }}
+        >
+          <button
+            onClick={onClose}
+            className="w-10 h-10 rounded-full flex items-center justify-center text-[22px] text-ink flex-shrink-0 cursor-pointer border-0"
+            style={{ background: 'rgba(0,0,0,0.06)' }}
+          >
+            ✕
+          </button>
+          <div className="flex flex-col gap-px ml-0.5">
+            <span className="text-[22px] font-extrabold text-ink">{c.icon} {c.label}</span>
+            <span className="text-[15px] font-semibold capitalize" style={{ color: c.accent }}>{dayName}</span>
+          </div>
+        </div>
+
+        {/* Body — recipe card */}
+        <div
+          className="overflow-y-auto flex-1 min-h-0 px-[18px] py-[14px]"
+          style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'contain' }}
+        >
+          <ItemCard
+            r={fakeR}
+            expanded={expanded}
+            onToggle={() => setExpanded(v => !v)}
+            onRemove={handleRemove}
+            details={details}
+            onToggleFavourite={onToggleFavourite}
+          />
+        </div>
+
+        {/* Footer */}
+        <div className="flex gap-2.5 px-[18px] pb-5 pt-[14px] border-t border-line flex-shrink-0">
+          <button
+            onClick={onChange}
+            className="flex-1 py-[14px] rounded-[14px] text-[19px] font-extrabold border-0 cursor-pointer text-ink"
+            style={{ background: 'rgba(0,0,0,0.06)' }}
+          >
+            Change
+          </button>
+          <button
+            onClick={onClose}
+            className="flex-1 py-[14px] rounded-[14px] text-[19px] font-extrabold text-white border-0 cursor-pointer"
+            style={{ background: c.accent }}
+          >
+            Done
+          </button>
+        </div>
+      </div>
+    </div>
   )
 }
 
