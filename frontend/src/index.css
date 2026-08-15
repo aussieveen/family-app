@@ -27,4 +27,10 @@ html, body, #root {
   --color-utility-border: #BEE3D9;
   --color-favorite-accent: #E0714F;
   --color-favorite-muted: #C9CCC2;
+  --color-baby-accent: #E0507A;
+  --color-baby-bg: #FBEAF0;
+  --color-baby-border: #F3C3D4;
+  --color-baking-accent: #A9714F;
+  --color-baking-bg: #F5EBE1;
+  --color-baking-border: #E3CBB0;
 }
