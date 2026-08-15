@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { getRecipe, getRecipes, getSuggestedSides, toggleFavourite } from '../../api/cookbook'
 import { assignMeal, assignFreeformMeal, clearMeal } from '../../api/mealPlanner'
+import MealMiniPicker from '../meal-planning/MealMiniPicker'
 
 // Shared close button used in modals
 function ModalClose({ onClick }) {
@@ -60,6 +61,7 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
   const [viewingAll, setViewingAll] = useState(false)
   const [expandedIds, setExpandedIds] = useState(new Set())
   const [recipeDetails, setRecipeDetails] = useState({})
+  const [miniPicker, setMiniPicker] = useState(null) // 'baby' | 'baking' | null
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search), 1000)
@@ -196,11 +198,11 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
   return (
     <>
       {/* Meal column inline panel */}
-      <div className="bg-meal-bg h-full flex flex-col p-[10px_14px] justify-center overflow-hidden min-w-0">
+      <div className="bg-meal-bg h-full flex flex-col p-[10px_14px] gap-2 overflow-hidden min-w-0 justify-center">
         {allRecipes.length === 0 ? (
           <button
             onClick={() => setOpen(true)}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl text-[17px] font-extrabold text-meal-accent cursor-pointer border-0 bg-transparent"
+            className="flex items-center justify-center gap-1.5 rounded-xl text-[17px] font-extrabold text-meal-accent cursor-pointer border-0 bg-transparent py-2"
             style={{ border: '1.5px dashed var(--color-meal-border)' }}
           >
             + Add meal
@@ -225,6 +227,20 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
             </div>
           </button>
         )}
+
+        {/* Baby + Baking mini-tracks */}
+        <div className="flex gap-1.5">
+          <MealMiniChip
+            track="baby"
+            assigned={meal?.baby ?? null}
+            onClick={() => setMiniPicker('baby')}
+          />
+          <MealMiniChip
+            track="baking"
+            assigned={meal?.baking ?? null}
+            onClick={() => setMiniPicker('baking')}
+          />
+        </div>
       </div>
 
       {/* Meal detail / management modal */}
@@ -468,7 +484,54 @@ export default function DayMeal({ meal, weekStartDate, dayName, onMealUpdated })
           </div>
         </div>
       )}
+
+      {miniPicker && (
+        <MealMiniPicker
+          track={miniPicker}
+          assigned={meal?.[miniPicker] ?? null}
+          weekStartDate={weekStartDate}
+          dayName={dayName}
+          onClose={() => setMiniPicker(null)}
+          onUpdated={onMealUpdated}
+        />
+      )}
     </>
+  )
+}
+
+// Inline chip for a mini-track slot. Shows assigned recipe or an "add" button.
+const MINI_CONFIG = {
+  baby:   { icon: '👶', label: "Leo's meal", accent: 'var(--color-baby-accent)',   bg: 'var(--color-baby-bg)',   border: 'var(--color-baby-border)' },
+  baking: { icon: '🧁', label: 'Baking',     accent: 'var(--color-baking-accent)', bg: 'var(--color-baking-bg)', border: 'var(--color-baking-border)' },
+}
+
+function MealMiniChip({ track, assigned, onClick }) {
+  const c = MINI_CONFIG[track]
+  if (assigned) {
+    return (
+      <button
+        onClick={onClick}
+        className="flex-1 flex items-center gap-1.5 min-w-0 rounded-lg py-1.5 px-2 cursor-pointer border-0"
+        style={{ background: 'var(--color-card-bg)', borderLeft: `3px solid ${c.accent}` }}
+      >
+        <span className="text-[13px] flex-shrink-0">{c.icon}</span>
+        <span className="flex flex-col min-w-0">
+          <span className="text-[9px] font-extrabold uppercase tracking-wider leading-none mb-0.5" style={{ color: c.accent }}>
+            {track === 'baby' ? 'Leo' : 'Baking'}
+          </span>
+          <span className="text-[12px] font-bold text-ink truncate leading-tight">{assigned.name}</span>
+        </span>
+      </button>
+    )
+  }
+  return (
+    <button
+      onClick={onClick}
+      className="flex-1 flex items-center justify-center gap-1 min-h-[30px] rounded-lg text-[12px] font-bold cursor-pointer border-0 bg-transparent"
+      style={{ border: `1.5px dashed ${c.border}`, color: c.accent }}
+    >
+      {c.icon} + {track === 'baby' ? "Leo" : 'Baking'}
+    </button>
   )
 }
 

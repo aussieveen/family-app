@@ -36,3 +36,16 @@ export async function clearMeal(weekStartDate, day) {
 export async function markShopped(fromDate) {
   await fetch(`${BASE}/api/v1/plan/shopped?from=${fromDate}`, { method: 'PATCH' })
 }
+
+export async function assignMiniMeal(weekStartDate, day, track, recipeId) {
+  const res = await fetch(`${BASE}/api/v1/plan/${weekStartDate}/${day}/${track}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ recipeId }),
+  })
+  return res.json()
+}
+
+export async function clearMiniMeal(weekStartDate, day, track) {
+  await fetch(`${BASE}/api/v1/plan/${weekStartDate}/${day}/${track}`, { method: 'DELETE' })
+}
