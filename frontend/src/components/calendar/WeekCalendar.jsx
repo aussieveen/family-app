@@ -4,6 +4,8 @@ import { getEvents } from '../../api/familyApp'
 import { getPlan } from '../../api/mealPlanner'
 import DayColumn from './DayColumn'
 import EventModal from './EventModal'
+import ShiftModal from './ShiftModal'
+import { isShiftEvent } from './shiftTypes'
 import ShoppingListModal from '../meal-planning/ShoppingListModal'
 
 const POLL_INTERVAL_MS = 60_000
@@ -13,7 +15,8 @@ export default function WeekCalendar({ members }) {
   const [today, setToday] = useState(() => new Date())
   const [events, setEvents] = useState([])
   const [plan, setPlan] = useState(null)
-  const [modal, setModal] = useState(null) // { event } | { date } | null
+  const [modal, setModal] = useState(null) // { event, shift } | { date, shift } | null
+  const mum = members.find(m => m.name === 'Mum')
   const [shoppingOpen, setShoppingOpen] = useState(false)
   const weekStartRef = useRef(weekStart)
 
@@ -124,14 +127,23 @@ export default function WeekCalendar({ members }) {
               weekStartDate={from}
               today={isToday(day) || format(day, 'yyyy-MM-dd') === format(today, 'yyyy-MM-dd')}
               onAddEvent={() => setModal({ date: format(day, 'yyyy-MM-dd') })}
-              onSelectEvent={event => setModal({ event })}
+              onAddShift={mum ? () => setModal({ date: format(day, 'yyyy-MM-dd'), shift: true }) : undefined}
+              onSelectEvent={event => setModal({ event, shift: isShiftEvent(event) })}
               onMealUpdated={refreshPlan}
             />
           </div>
         ))}
       </div>
 
-      {modal && (
+      {modal && (modal.shift ? (
+        <ShiftModal
+          event={modal.event}
+          defaultDate={modal.date}
+          mum={mum}
+          onClose={() => setModal(null)}
+          onSaved={() => { setModal(null); refresh() }}
+        />
+      ) : (
         <EventModal
           event={modal.event}
           defaultDate={modal.date}
@@ -140,7 +152,7 @@ export default function WeekCalendar({ members }) {
           onClose={() => setModal(null)}
           onSaved={() => { setModal(null); refresh() }}
         />
-      )}
+      ))}
 
       {shoppingOpen && (
         <ShoppingListModal fromDate={format(new Date(), 'yyyy-MM-dd')} onClose={() => setShoppingOpen(false)} />

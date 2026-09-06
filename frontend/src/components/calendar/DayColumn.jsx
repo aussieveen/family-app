@@ -2,7 +2,7 @@ import { format } from 'date-fns'
 import EventCard from './EventCard'
 import DayMeal from './DayMeal'
 
-export default function DayColumn({ day, events, meal, weekStartDate, today, onAddEvent, onSelectEvent, onMealUpdated }) {
+export default function DayColumn({ day, events, meal, weekStartDate, today, onAddEvent, onAddShift, onSelectEvent, onMealUpdated }) {
   const dayName = format(day, 'EEEE').toLowerCase()
 
   return (
@@ -41,13 +41,24 @@ export default function DayColumn({ day, events, meal, weekStartDate, today, onA
         {events.map(event => (
           <EventCard key={`${event.id}-${event.occurrenceDate}`} event={event} onClick={() => onSelectEvent(event)} />
         ))}
-        <button
-          onClick={onAddEvent}
-          className={`flex items-center justify-center gap-1.5 text-[17px] font-bold text-ink-soft px-3 py-2 rounded-xl cursor-pointer border-0 bg-transparent ${events.length === 0 ? 'flex-1' : 'self-start min-h-[40px]'}`}
-          style={{ border: '1.5px dashed rgba(0,0,0,0.15)' }}
-        >
-          + Add event
-        </button>
+        <div className={`flex gap-2 ${events.length === 0 ? 'flex-1' : 'self-start'}`}>
+          <button
+            onClick={onAddEvent}
+            className={`flex items-center justify-center gap-1.5 text-[17px] font-bold text-ink-soft px-3 py-2 rounded-xl cursor-pointer border-0 bg-transparent min-h-[40px] ${events.length === 0 ? 'flex-1' : ''}`}
+            style={{ border: '1.5px dashed rgba(0,0,0,0.15)' }}
+          >
+            + Add event
+          </button>
+          {onAddShift && (
+            <button
+              onClick={onAddShift}
+              className={`flex items-center justify-center gap-1.5 text-[17px] font-bold text-ink-soft px-3 py-2 rounded-xl cursor-pointer border-0 bg-transparent min-h-[40px] ${events.length === 0 ? 'flex-1' : ''}`}
+              style={{ border: '1.5px dashed rgba(0,0,0,0.15)' }}
+            >
+              + Add shift
+            </button>
+          )}
+        </div>
       </div>
     </div>
   )
